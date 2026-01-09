@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         parcelasValor: document.getElementById('parcelasValor'),
         parcelasSemJuros: document.getElementById('parcelasSemJuros'),
         freteGratis: document.getElementById('freteGratis'),
+        comCupom: document.getElementById('comCupom'),
         linkAfiliado: document.getElementById('linkAfiliado')
     };
 
@@ -25,6 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const priceTag = document.getElementById('priceTag');
     const btnSend = document.getElementById('btnSend');
 
+    // Reset Form Function
+    const resetForm = () => {
+        inputs.titulo.value = '';
+        inputs.nomeProduto.value = '';
+        inputs.precoAntigo.value = '';
+        inputs.precoAtual.value = '';
+        inputs.parcelasQtd.value = '';
+        inputs.parcelasValor.value = '';
+        inputs.parcelasSemJuros.checked = false;
+        inputs.freteGratis.checked = false;
+        inputs.comCupom.checked = false;
+        inputs.linkAfiliado.value = '';
+        
+        // Trigger regeneration
+        generateMessage();
+    };
+
     const generateMessage = () => {
         const rawCurrentPrice = parseFloat(inputs.precoAtual.value.replace(',', '.'));
         const rawOldPrice = parseFloat(inputs.precoAntigo.value.replace(',', '.'));
@@ -37,15 +55,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isNaN(rawCurrentPrice)) {
             messageOutput.textContent = 'Aguardando preço do produto...';
+            priceTag.textContent = 'Aguardando preço...';
             return;
         }
 
         const data = {
-            titulo: inputs.titulo.value.trim() || '{TITULO}',
+            titulo: inputs.titulo.value.trim(),
             nomeProduto: inputs.nomeProduto.value.trim() || '{PRODUTO}',
             precoAntigoStr: (!isNaN(rawOldPrice) && rawOldPrice > 0) ? rawOldPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : null,
             precoAtualStr: rawCurrentPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
             frete: inputs.freteGratis.checked ? '🚚 Frete Grátis' : null,
+            cupom: inputs.comCupom.checked ? '🎟️ Com cupom' : null,
             link: inputs.linkAfiliado.value.trim() || '{LINK}'
         };
 
@@ -70,13 +90,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // BUILD MESSAGE
         const msgLines = [
             FIXED.header,
-            ``,
-            `👉 *${data.titulo}*`,
-            ``,
-            `📦 *${data.nomeProduto}*`
+            ``
         ];
 
-        // 1. Preço Antigo (se existir) + Preço Atual em linhas separadas
+        // Title is optional now
+        if (data.titulo) {
+            msgLines.push(`👉 *${data.titulo}*`);
+            msgLines.push(``);
+        }
+
+        msgLines.push(`📦 *${data.nomeProduto}*`);
+
+        // Price lines
         if (data.precoAntigoStr) {
             msgLines.push(`~💰 De R$ ${data.precoAntigoStr}~`);
         }
@@ -84,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (parcelamentoStr) msgLines.push(parcelamentoStr);
         if (data.frete) msgLines.push(data.frete);
+        if (data.cupom) msgLines.push(data.cupom);
 
         msgLines.push(
             ``,
@@ -104,5 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSend.addEventListener('click', () => {
         const url = `https://wa.me/5544988602881?text=${encodeURIComponent(messageOutput.textContent)}`;
         window.open(url, '_blank');
+        
+        // Reset form after sending
+        resetForm();
     });
 });
