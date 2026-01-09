@@ -56,36 +56,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const valor = inputs.parcelasValor.value;
             const semJuros = inputs.parcelasSemJuros.checked;
             if (qtd && valor) {
-                const formattedValor = parseFloat(valor.replace(',', '.')).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                const formattedValor = parseFloat(valor.toString().replace(',', '.')).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                 parcelamentoStr = `💳 ${qtd}x de R$ ${formattedValor}${semJuros ? ' sem juros' : ''}`;
             }
         }
 
-        // Determine category for Tag (all templates are now basically unified)
+        // Determine category for Tag
         let category = "MÉDIO";
         if (rawCurrentPrice < 30) { category = "BARATO"; }
         else if (rawCurrentPrice >= 150 && rawCurrentPrice <= 500) { category = "CARO"; }
         else if (rawCurrentPrice > 500) { category = "MUITO CARO"; }
 
-        // BUILD MESSAGE (Unified Format)
-        const msg = [
+        // BUILD MESSAGE
+        const msgLines = [
             FIXED.header,
             ``,
             `👉 *${data.titulo}*`,
             ``,
-            `📦 *${data.nomeProduto}*`,
-            `💰 ${data.precoAntigoStr ? `De ~R$ ${data.precoAntigoStr}~ ` : ''}Por *R$ ${data.precoAtualStr}*`,
-            parcelamentoStr ? parcelamentoStr : null,
-            data.frete ? data.frete : null,
+            `📦 *${data.nomeProduto}*`
+        ];
+
+        // 1. Preço Antigo (se existir) + Preço Atual em linhas separadas
+        if (data.precoAntigoStr) {
+            msgLines.push(`~💰 De R$ ${data.precoAntigoStr}~`);
+        }
+        msgLines.push(`💰 Por *R$ ${data.precoAtualStr}*`);
+
+        if (parcelamentoStr) msgLines.push(parcelamentoStr);
+        if (data.frete) msgLines.push(data.frete);
+
+        msgLines.push(
             ``,
             `🛒 Comprar agora:`,
             data.link,
             ``,
             `✅ Grupo no WhatsApp com as ofertas:`,
             FIXED.linkGrupo
-        ].filter(l => l !== null).join('\n');
+        );
 
-        messageOutput.textContent = msg;
+        messageOutput.textContent = msgLines.filter(l => l !== null).join('\n');
         priceTag.textContent = category;
     };
 

@@ -167,12 +167,15 @@ body {
 /* Form Styles */
 .form-group {
     margin-bottom: 1.2rem;
+    min-width: 0;
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    min-width: 0;
+    width: 100%;
 }
 
 label {
@@ -181,12 +184,16 @@ label {
     font-weight: 500;
     color: var(--text-muted);
     font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 input[type="text"],
 input[type="number"],
 input[type="url"] {
     width: 100%;
+    min-width: 0;
     background: var(--input-bg);
     border: 1px solid var(--border-color);
     border-radius: 10px;
@@ -195,6 +202,7 @@ input[type="url"] {
     font-size: 1rem;
     font-family: inherit;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 input:focus {
