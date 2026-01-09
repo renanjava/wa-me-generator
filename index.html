@@ -50,10 +50,20 @@
                     </div>
 
                     <!-- Div Oculta para Parcelamento -->
-                    <div class="form-group hidden" id="parcelamentoContainer">
-                        <label for="parcelamento">Opções de Parcelamento</label>
-                        <input type="text" id="parcelamento" placeholder="Ex: 5x sem juros">
-                        <small>Aparece apenas para produtos acima de R$ 50,00</small>
+                    <div id="parcelamentoContainer" class="hidden">
+                        <label>Opções de Parcelamento</label>
+                        <div class="form-row">
+                            <div class="form-group no-margin">
+                                <input type="number" id="parcelasQtd" placeholder="Qtd (ex: 10)" min="1">
+                            </div>
+                            <div class="form-group no-margin">
+                                <input type="number" id="parcelasValor" placeholder="Valor (ex: 59,90)" step="0.01">
+                            </div>
+                        </div>
+                        <div class="form-group checkbox-group no-margin top-spacing">
+                            <input type="checkbox" id="parcelasSemJuros">
+                            <label for="parcelasSemJuros">Sem juros</label>
+                        </div>
                     </div>
 
                     <div class="form-group checkbox-group">
@@ -84,7 +94,7 @@
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.472 14.382C17.112 14.382 14.665 13.342 14.305 13.342C13.945 13.342 13.585 13.842 13.465 13.962C12.745 14.682 9.42497 10.422 9.06497 10.062C8.94497 9.942 9.42497 8.982 9.42497 8.622C9.42497 8.262 9.06497 7.062 8.70497 6.102C8.34497 5.142 7.74497 5.622 7.50497 5.742C7.26497 5.862 6.54497 5.982 6.18497 6.342C5.94497 6.582 5.22497 7.302 5.22497 8.982C5.22497 10.662 6.54497 12.582 6.78497 12.942C7.98497 14.862 10.985 18.222 15.185 18.222C19.385 18.222 18.665 14.382 18.185 14.382C17.945 14.382 17.592 14.382 17.472 14.382Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        Enviar p/ 44 98860-2881
+                        Enviar para o WhatsApp
                     </button>
                     <!-- <span id="copyFeedback" class="feedback-msg">Copiado!</span> (Removido feedback de cópia) -->
                 </div>

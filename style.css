@@ -1,3 +1,8 @@
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 :root {
     --primary-hue: 260;
     --primary: hsl(var(--primary-hue), 100%, 65%);
@@ -123,6 +128,21 @@ body {
     }
 }
 
+@media (max-width: 600px) {
+    body {
+        padding: 1rem;
+    }
+    .card {
+        padding: 1.25rem;
+    }
+    .app-header h1 {
+        font-size: 2.2rem;
+    }
+    .grid-layout {
+        gap: 1.5rem;
+    }
+}
+
 /* Cards (Glassmorphism) */
 .card {
     background: var(--card-bg);
@@ -132,6 +152,7 @@ body {
     border-radius: 20px;
     padding: 2rem;
     box-shadow: var(--glass-shadow);
+    width: 100%;
 }
 
 .card h2 {
@@ -248,6 +269,22 @@ input[type="checkbox"]:checked::after {
     font-weight: 600;
     color: var(--primary);
     border: 1px solid var(--border-color);
+}
+
+#parcelamentoContainer {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.no-margin {
+    margin-bottom: 0 !important;
+}
+
+.top-spacing {
+    margin-top: 1rem !important;
 }
 
 .hidden {

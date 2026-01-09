@@ -5,14 +5,16 @@ document.addEventListener('DOMContentLoaded', () => {
         nomeProduto: document.getElementById('nomeProduto'),
         precoAntigo: document.getElementById('precoAntigo'),
         precoAtual: document.getElementById('precoAtual'),
-        parcelamento: document.getElementById('parcelamento'),
+        parcelasQtd: document.getElementById('parcelasQtd'),
+        parcelasValor: document.getElementById('parcelasValor'),
+        parcelasSemJuros: document.getElementById('parcelasSemJuros'),
         freteGratis: document.getElementById('freteGratis'),
         linkAfiliado: document.getElementById('linkAfiliado')
     };
 
     // Fixed Values
     const FIXED = {
-        header: "📢 Itambé Promoções",
+        header: "📢 Itambé/PR Promoções",
         linkGrupo: "https://chat.whatsapp.com/GduFGpLaZuv2RDu0SMBT8e"
     };
 
@@ -43,19 +45,29 @@ document.addEventListener('DOMContentLoaded', () => {
             nomeProduto: inputs.nomeProduto.value.trim() || '{PRODUTO}',
             precoAntigoStr: (!isNaN(rawOldPrice) && rawOldPrice > 0) ? rawOldPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : null,
             precoAtualStr: rawCurrentPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-            parcelamento: (!parcelamentoContainer.classList.contains('hidden') && inputs.parcelamento.value.trim()) ? inputs.parcelamento.value.trim() : null,
             frete: inputs.freteGratis.checked ? '🚚 Frete Grátis' : null,
             link: inputs.linkAfiliado.value.trim() || '{LINK}'
         };
 
-        // Determine CTA based on price
-        let cta = "Comprar agora";
+        // Installment computation
+        let parcelamentoStr = null;
+        if (rawCurrentPrice >= 50) {
+            const qtd = inputs.parcelasQtd.value;
+            const valor = inputs.parcelasValor.value;
+            const semJuros = inputs.parcelasSemJuros.checked;
+            if (qtd && valor) {
+                const formattedValor = parseFloat(valor.replace(',', '.')).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                parcelamentoStr = `💳 ${qtd}x de R$ ${formattedValor}${semJuros ? ' sem juros' : ''}`;
+            }
+        }
+
+        // Determine category for Tag (all templates are now basically unified)
         let category = "MÉDIO";
         if (rawCurrentPrice < 30) { category = "BARATO"; }
-        else if (rawCurrentPrice >= 150 && rawCurrentPrice <= 500) { cta = "Ver detalhes"; category = "CARO"; }
-        else if (rawCurrentPrice > 500) { cta = "Ver detalhes e condições"; category = "MUITO CARO"; }
+        else if (rawCurrentPrice >= 150 && rawCurrentPrice <= 500) { category = "CARO"; }
+        else if (rawCurrentPrice > 500) { category = "MUITO CARO"; }
 
-        // BUILD MESSAGE (Compact Format requested)
+        // BUILD MESSAGE (Unified Format)
         const msg = [
             FIXED.header,
             ``,
@@ -63,13 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ``,
             `📦 *${data.nomeProduto}*`,
             `💰 ${data.precoAntigoStr ? `De ~R$ ${data.precoAntigoStr}~ ` : ''}Por *R$ ${data.precoAtualStr}*`,
-            data.parcelamento ? `💳 ${data.parcelamento}` : null,
+            parcelamentoStr ? parcelamentoStr : null,
             data.frete ? data.frete : null,
             ``,
-            `👉 ${cta}:`,
+            `🛒 Comprar agora:`,
             data.link,
             ``,
-            `✅ Entre no grupo para mais ofertas:`,
+            `✅ Grupo no WhatsApp com as ofertas:`,
             FIXED.linkGrupo
         ].filter(l => l !== null).join('\n');
 
