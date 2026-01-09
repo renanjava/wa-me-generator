@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         msgLines.push(`📦 *${data.nomeProduto}*`);
+        msgLines.push(``);
 
         // Price lines
         if (data.precoAntigoStr) {
