@@ -118,8 +118,9 @@ body {
 
 .grid-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 2rem;
+    width: 100%;
 }
 
 @media (max-width: 900px) {
@@ -153,6 +154,8 @@ body {
     padding: 2rem;
     box-shadow: var(--glass-shadow);
     width: 100%;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .card h2 {
@@ -307,14 +310,25 @@ input[type="checkbox"]:checked::after {
     border: 1px solid rgba(255, 255, 255, 0.05);
     margin-bottom: 1.5rem;
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .preview-box pre {
     white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all; /* Force breaking of long URLs */
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* WhatsApp font alike */
     color: #e9edef;
     font-size: 0.95rem;
     line-height: 1.5;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    overflow-x: hidden;
 }
 
 /* Actions */
