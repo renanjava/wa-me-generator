@@ -24,7 +24,6 @@
         </header>
 
         <div class="grid-layout">
-            <!-- FORMULÁRIO -->
             <section class="card form-card">
                 <h2>📋 Dados da Oferta</h2>
                 <form id="promoForm">
@@ -49,7 +48,6 @@
                         </div>
                     </div>
 
-                    <!-- Div Oculta para Parcelamento -->
                     <div id="parcelamentoContainer" class="hidden">
                         <label>Opções de Parcelamento</label>
                         <div class="form-row">
@@ -83,7 +81,6 @@
                 </form>
             </section>
 
-            <!-- PREVIEW -->
             <section class="card preview-card">
                 <div class="preview-header">
                     <h2>📱 Prévia da Mensagem</h2>
@@ -95,13 +92,24 @@
                 </div>
 
                 <div class="actions">
+                    <div class="json-section" style="margin-bottom: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <label for="jsonInput" style="display: block; margin-bottom: 5px; font-weight: bold;">Cole o JSON da Shopee aqui:</label>
+                        <textarea id="jsonInput" placeholder='{"data": ...}' style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: monospace; font-size: 12px; margin-bottom: 10px;"></textarea>
+                        
+                        <button type="button" id="btnLoadJson" class="btn-primary" style="background-color: #2563eb; width: 100%; margin-bottom: 10px;">
+                            📂 Carregar Produtos
+                        </button>
+                    </div>
+
+                    <div id="productsList" class="products-list" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                    </div>
+
                     <button type="button" id="btnSend" class="btn-primary btn-whatsapp">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.472 14.382C17.112 14.382 14.665 13.342 14.305 13.342C13.945 13.342 13.585 13.842 13.465 13.962C12.745 14.682 9.42497 10.422 9.06497 10.062C8.94497 9.942 9.42497 8.982 9.42497 8.622C9.42497 8.262 9.06497 7.062 8.70497 6.102C8.34497 5.142 7.74497 5.622 7.50497 5.742C7.26497 5.862 6.54497 5.982 6.18497 6.342C5.94497 6.582 5.22497 7.302 5.22497 8.982C5.22497 10.662 6.54497 12.582 6.78497 12.942C7.98497 14.862 10.985 18.222 15.185 18.222C19.385 18.222 18.665 14.382 18.185 14.382C17.945 14.382 17.592 14.382 17.472 14.382Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        Enviar para o WhatsApp
+                        Enviar para o WhatsApp (Manual)
                     </button>
-                    <!-- <span id="copyFeedback" class="feedback-msg">Copiado!</span> (Removido feedback de cópia) -->
                 </div>
             </section>
         </div>

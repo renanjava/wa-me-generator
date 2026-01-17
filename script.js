@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Inputs (Visible)
     const inputs = {
         titulo: document.getElementById('titulo'),
         nomeProduto: document.getElementById('nomeProduto'),
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         linkAfiliado: document.getElementById('linkAfiliado')
     };
 
-    // Fixed Values
     const FIXED = {
         header: "📢 Itambé/PR Promoções",
         linkGrupo: "https://chat.whatsapp.com/GduFGpLaZuv2RDu0SMBT8e"
@@ -21,12 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const parcelamentoContainer = document.getElementById('parcelamentoContainer');
 
-    // Outputs
     const messageOutput = document.getElementById('messageOutput');
     const priceTag = document.getElementById('priceTag');
     const btnSend = document.getElementById('btnSend');
 
-    // Reset Form Function
     const resetForm = () => {
         inputs.titulo.value = '';
         inputs.nomeProduto.value = '';
@@ -39,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inputs.comCupom.checked = false;
         inputs.linkAfiliado.value = '';
         
-        // Trigger regeneration
         generateMessage();
     };
 
@@ -69,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
             link: inputs.linkAfiliado.value.trim() || '{LINK}'
         };
 
-        // Installment computation
         let parcelamentoStr = null;
         if (rawCurrentPrice >= 50) {
             const qtd = inputs.parcelasQtd.value;
@@ -81,19 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Determine category for Tag
         let category = "MÉDIO";
         if (rawCurrentPrice < 30) { category = "BARATO"; }
         else if (rawCurrentPrice >= 150 && rawCurrentPrice <= 500) { category = "CARO"; }
         else if (rawCurrentPrice > 500) { category = "MUITO CARO"; }
 
-        // BUILD MESSAGE
         const msgLines = [
             FIXED.header,
             ``
         ];
 
-        // Title is optional now
         if (data.titulo) {
             msgLines.push(`👉 *${data.titulo}*`);
             msgLines.push(``);
@@ -102,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
         msgLines.push(`📦 *${data.nomeProduto}*`);
         msgLines.push(``);
 
-        // Price lines
         if (data.precoAntigoStr) {
             msgLines.push(`~💰 De R$ ${data.precoAntigoStr}~`);
         }
@@ -132,7 +122,96 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = `https://wa.me/5544988602881?text=${encodeURIComponent(messageOutput.textContent)}`;
         window.open(url, '_blank');
         
-        // Reset form after sending
         resetForm();
+    });
+
+    const btnLoadJson = document.getElementById('btnLoadJson');
+    const jsonInput = document.getElementById('jsonInput');
+    const productsList = document.getElementById('productsList');
+
+    btnLoadJson.addEventListener('click', () => {
+        const rawJson = jsonInput.value.trim();
+        productsList.innerHTML = '';
+
+        if (!rawJson) {
+            alert("Cole o JSON primeiro!");
+            return;
+        }
+
+        try {
+            const parsed = JSON.parse(rawJson);
+            
+            let nodes = [];
+            if (parsed.data && parsed.data.productOfferV2 && parsed.data.productOfferV2.nodes) {
+                nodes = parsed.data.productOfferV2.nodes;
+            } else if (parsed.nodes) {
+                nodes = parsed.nodes;
+            } else if (Array.isArray(parsed)) {
+                nodes = parsed;
+            } else {
+                alert("Estrutura do JSON não reconhecida. Certifique-se que contém 'productOfferV2.nodes'.");
+                return;
+            }
+            
+            if (nodes.length === 0) {
+                alert("Nenhum produto encontrado no JSON.");
+                return;
+            }
+
+            nodes.forEach((product, index) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'product-btn';
+                btn.style.width = '100%';
+                btn.style.textAlign = 'left';
+                btn.style.padding = '10px';
+                btn.style.border = '1px solid #ddd';
+                btn.style.borderRadius = '5px';
+                btn.style.backgroundColor = '#f9fafb';
+                btn.style.cursor = 'pointer';
+                btn.style.marginBottom = '5px';
+                btn.style.display = 'flex';
+                btn.style.alignItems = 'center';
+                btn.style.gap = '10px';
+                
+                const commission = product.commission ? `(Comissão: R$ ${parseFloat(product.commission).toFixed(2)})` : '';
+                
+                btn.innerHTML = `
+                    <div style="font-weight: bold; color: #4b5563;">#${index + 1}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 14px; color: #1f2937;">${product.productName.substring(0, 50)}...</div>
+                        <div style="font-size: 12px; color: #6b7280;">Preço: R$ ${product.price} <span style="color: #10b981;">${commission}</span></div>
+                    </div>
+                    <div style="font-size: 20px;">➡️</div>
+                `;
+
+                btn.addEventListener('click', () => {
+                    inputs.titulo.value = "🔥 MAIS VENDIDO!";
+                    inputs.nomeProduto.value = product.productName;
+                    inputs.precoAntigo.value = "";
+                    inputs.precoAtual.value = product.price.toString();
+                    inputs.linkAfiliado.value = product.offerLink;
+                    inputs.freteGratis.checked = true;
+                    inputs.comCupom.checked = true;
+
+                    generateMessage();
+
+                    const text = messageOutput.textContent;
+                    const url = `https://wa.me/5544988602881?text=${encodeURIComponent(text)}`;
+                    window.open(url, '_blank');
+                    
+                    btn.style.backgroundColor = '#d1fae5';
+                    btn.style.borderColor = '#10b981';
+                });
+
+                productsList.appendChild(btn);
+            });
+
+            alert(`✅ ${nodes.length} produtos carregados! Clique neles para enviar.`);
+
+        } catch (e) {
+            console.error(e);
+            alert("Erro ao ler JSON. Verifique a formatação.");
+        }
     });
 });

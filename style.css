@@ -37,7 +37,6 @@ body {
     padding: 2rem;
 }
 
-/* Dynamic Background */
 .background-blobs {
     position: fixed;
     top: 0;
@@ -88,7 +87,6 @@ body {
     to { transform: translate(30px, -30px) scale(1.1); }
 }
 
-/* Layout */
 .container {
     width: 100%;
     max-width: 1200px;
@@ -144,7 +142,6 @@ body {
     }
 }
 
-/* Cards (Glassmorphism) */
 .card {
     background: var(--card-bg);
     backdrop-filter: blur(12px);
@@ -167,7 +164,6 @@ body {
     gap: 0.5rem;
 }
 
-/* Form Styles */
 .form-group {
     margin-bottom: 1.2rem;
     min-width: 0;
@@ -222,7 +218,6 @@ small {
     color: #666;
 }
 
-/* Checkbox */
 .checkbox-group {
     display: flex;
     align-items: center;
@@ -264,7 +259,6 @@ input[type="checkbox"]:checked::after {
     color: var(--text-main);
 }
 
-/* Preview Styles */
 .preview-header {
     display: flex;
     justify-content: space-between;
@@ -303,7 +297,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .preview-box {
-    background: #0b141a; /* WhatsApp Dark bg approximation */
+    background: #0b141a; 
     border-radius: 10px;
     padding: 1.5rem;
     min-height: 300px;
@@ -320,8 +314,8 @@ input[type="checkbox"]:checked::after {
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    word-break: break-all; /* Force breaking of long URLs */
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* WhatsApp font alike */
+    word-break: break-all;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: #e9edef;
     font-size: 0.95rem;
     line-height: 1.5;
@@ -331,7 +325,6 @@ input[type="checkbox"]:checked::after {
     overflow-x: hidden;
 }
 
-/* Actions */
 .actions {
     display: flex;
     flex-direction: column;
@@ -367,7 +360,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .btn-whatsapp {
-    background: /*linear-gradient(135deg, #25D366 0%, #128C7E 100%)*/ #25D366;
+    background: #25D366;
     color: white;
 }
 .btn-whatsapp:hover {
