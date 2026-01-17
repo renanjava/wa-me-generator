@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const FIXED = {
         header: "📢 Itambé/PR Promoções",
-        linkGrupo: "https://chat.whatsapp.com/GduFGpLaZuv2RDu0SMBT8e"
+        linkGrupo: "https://chat.whatsapp.com/G4cttd3Ykv0IjQH00i3LVo"
     };
 
     const parcelamentoContainer = document.getElementById('parcelamentoContainer');
@@ -186,13 +186,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
                 btn.addEventListener('click', () => {
-                    inputs.titulo.value = "🔥 MAIS VENDIDO!";
+                    inputs.titulo.value = "";
                     inputs.nomeProduto.value = product.productName;
                     inputs.precoAntigo.value = "";
                     inputs.precoAtual.value = product.price.toString();
                     inputs.linkAfiliado.value = product.offerLink;
-                    inputs.freteGratis.checked = true;
-                    inputs.comCupom.checked = true;
+                    inputs.freteGratis.checked = false;
+                    inputs.comCupom.checked = false;
 
                     generateMessage();
 
