@@ -319,7 +319,7 @@ async function generateStoryImage(product, formattedData) {
 
         const imgAreaMargin = 40;
         const imgAreaW = cardWidth - (imgAreaMargin * 2);
-        const imgAreaH = cardHeight - 300;
+        const imgAreaH = cardHeight - 450; // Aumentado espaço para texto e preço dentro do card
         const imgAreaX = cardX + imgAreaMargin;
         const imgAreaY = cardY + imgAreaMargin;
         const scale = Math.min(imgAreaW / img.width, imgAreaH / img.height);
@@ -333,36 +333,24 @@ async function generateStoryImage(product, formattedData) {
         ctx.fillStyle = '#cccccc';
         ctx.font = '40px Outfit, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText("Imagem indisponível", 540, cardY + 400);
+        ctx.fillText("Imagem indisponível", 540, cardY + 300);
     }
 
-    const priceY = cardY + cardHeight - 100;
-    if (formattedData.data.precoAntigoStr) {
-        ctx.fillStyle = '#999999';
-        ctx.font = '40px Outfit, sans-serif';
-        ctx.textAlign = 'center';
-        const oldPriceText = `De R$ ${formattedData.data.precoAntigoStr}`;
-        ctx.fillText(oldPriceText, 540, priceY - 95);
-        const textWidth = ctx.measureText(oldPriceText).width;
-        ctx.beginPath();
-        ctx.strokeStyle = '#999999';
-        ctx.lineWidth = 3;
-        ctx.moveTo(540 - textWidth/2, priceY - 107);
-        ctx.lineTo(540 + textWidth/2, priceY - 107);
-        ctx.stroke();
-    }
+    // Nome do Produto (Dentro do card, abaixo da imagem)
+    ctx.fillStyle = '#333333';
+    ctx.textAlign = 'center';
+    ctx.font = '600 45px Outfit, sans-serif';
+    const productName = product.productName;
+    const nameY = cardY + cardHeight - 340;
+    wrapText(ctx, productName, 540, nameY, cardWidth - 80, 55, 3);
 
+    // Preço Atual (Abaixo do nome, dentro do card)
     ctx.fillStyle = '#ef4444';
     ctx.font = 'bold 100px Outfit, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`R$ ${formattedData.data.precoAtualStr}`, 540, priceY + 15);
+    ctx.fillText(`R$ ${formattedData.data.precoAtualStr}`, 540, cardY + cardHeight - 80);
 
-    ctx.fillStyle = '#FFFFFF';
-    ctx.textAlign = 'center';
-    ctx.font = '600 50px Outfit, sans-serif';
-    const productName = product.productName;
-    wrapText(ctx, productName, 540, cardY + cardHeight + 80, 940, 65, 3);
-
+    // 7. Call to Action (Links) - Fora do card
     ctx.textAlign = 'left';
     ctx.font = 'bold 65px Outfit, sans-serif';
     ctx.fillStyle = '#FFFFFF';
@@ -414,12 +402,16 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
         const testLine = line + words[n] + ' ';
         const metrics = ctx.measureText(testLine);
         const testWidth = metrics.width;
+        
         if (testWidth > maxWidth && n > 0) {
+            if (lineCount === maxLines) {
+                ctx.fillText(line.trim() + '...', x, y);
+                return;
+            }
             ctx.fillText(line, x, y);
             line = words[n] + ' ';
             y += lineHeight;
             lineCount++;
-            if (lineCount > maxLines) return;
         } else {
             line = testLine;
         }
