@@ -282,52 +282,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     const result = getFormattedText();
                     if (!result.valid) return;
 
-                    const text = result.ig;
-                    const storyImageUrl = product.imageUrl;
+                    // 1. COPIAR LINKS PARA CLIPBOARD
+                    const linkText = `Link da oferta: ${product.offerLink}\nLink do grupo: https://chat.whatsapp.com/G4cttd3Ykv0IjQH00i3LVo`;
+                    
+                    try {
+                        await navigator.clipboard.writeText(linkText);
+                    } catch (err) {
+                        console.warn('Não foi possível copiar:', err);
+                    }
+
+                    // 2. GERAR IMAGEM E COMPARTILHAR
+                    const originalBtnContent = btnIG.innerHTML;
+                    btnIG.innerHTML = '⏳ Gerando...';
+                    btnIG.disabled = true;
 
                     try {
-                        await navigator.clipboard.writeText(text);
-                        const originalBtnContent = btnIG.innerHTML;
-                        btnIG.innerHTML = '📋 Copiado!';
-                        setTimeout(() => btnIG.innerHTML = originalBtnContent, 2000);
+                        await generateStoryImage(product, result);
                         
-                        if (navigator.share && storyImageUrl) {
-                            try {
-                                const response = await fetch(storyImageUrl);
-                                const blob = await response.blob();
-                                const file = new File([blob], 'produto.png', { type: blob.type });
-
-                                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                                    await navigator.share({
-                                        files: [file],
-                                        title: 'Compartilhar Produto',
-                                        text: text 
-                                    });
-                                } else {
-                                    throw new Error('Sharing files not supported');
-                                }
-                            } catch (shareError) {
-                                console.warn('Share API failed, falling back to deep link/clipboard', shareError);
-                                
-                                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                                if (isMobile) {
-                                     window.location.href = `instagram://story-camera`;
-                                } else {
-                                     window.open(`https://www.instagram.com/`, '_blank');
-                                }
-                            }
-                        } else {
-                            throw new Error('Web Share API not supported');
-                        }
+                        btnIG.innerHTML = '✅ Pronto!';
+                        setTimeout(() => {
+                            btnIG.innerHTML = originalBtnContent;
+                            btnIG.disabled = false;
+                        }, 2000);
 
                     } catch (err) {
-                        console.warn('Clipboard or Share failed', err);
-                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                        if (isMobile) {
-                                window.location.href = `instagram://story-camera`;
-                        } else {
-                                window.open(`https://www.instagram.com/`, '_blank');
-                        }
+                        console.error('Erro ao gerar imagem:', err);
+                        btnIG.innerHTML = '❌ Erro';
+                        setTimeout(() => {
+                            btnIG.innerHTML = originalBtnContent;
+                            btnIG.disabled = false;
+                        }, 2000);
                     }
                 });
 
@@ -349,3 +333,220 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// FUNÇÕES AUXILIARES PARA GERAR STORY
+
+async function generateStoryImage(product, formattedData) {
+    const canvas = document.getElementById('storyCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Configurar tamanho
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    // 1. Fundo Gradiente Moderno
+    const gradient = ctx.createLinearGradient(0, 0, 0, 1920);
+    // Roxo (#2b1055) -> Rosa (#7597de) -> Azul (#2b1055) - Exemplo vibrante
+    gradient.addColorStop(0, '#4facfe');
+    gradient.addColorStop(1, '#00f2fe');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    // Adicionar um overlay sutil para textura (opcional, ou apenas manter o gradiente limpo)
+    
+    // 2. Cabeçalho
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 50px Outfit, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 10;
+    ctx.fillText("📢 Itambé Promoções", 540, 150);
+    ctx.shadowBlur = 0; // Reset shadow
+
+    // 3. Card do Produto (Fundo Branco)
+    const cardY = 300;
+    const cardHeight = 900;
+    const cardWidth = 900;
+    const cardX = (1080 - cardWidth) / 2;
+    
+    ctx.fillStyle = '#FFFFFF';
+    ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 40);
+    ctx.fill();
+    
+    // Sombra do card
+    ctx.shadowColor = "rgba(0,0,0,0.2)";
+    ctx.shadowBlur = 30;
+    ctx.shadowOffsetY = 20;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    // 4. Imagem do Produto
+    try {
+        const img = new Image();
+        img.crossOrigin = 'anonymous'; // Importante para CORS
+        await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = product.imageUrl;
+        });
+
+        // Desenhar imagem mantendo proporção dentro do card
+        // Área disponível para imagem dentro do card
+        const imgAreaMargin = 50;
+        const imgAreaW = cardWidth - (imgAreaMargin * 2);
+        const imgAreaH = cardHeight - 350; // Deixar espaço embaixo para info
+        const imgAreaX = cardX + imgAreaMargin;
+        const imgAreaY = cardY + imgAreaMargin;
+
+        const scale = Math.min(imgAreaW / img.width, imgAreaH / img.height);
+        const w = img.width * scale;
+        const h = img.height * scale;
+        const x = imgAreaX + (imgAreaW - w) / 2;
+        const y = imgAreaY + (imgAreaH - h) / 2;
+
+        ctx.drawImage(img, x, y, w, h);
+
+    } catch (e) {
+        console.warn('Erro ao carregar imagem do produto:', e);
+        // Fallback se falhar imagem
+        ctx.fillStyle = '#cccccc';
+        ctx.font = '40px Outfit, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("Imagem indisponível", 540, cardY + 300);
+    }
+
+    // 5. Preço (Dentro do card, parte inferior)
+    const priceY = cardY + cardHeight - 160;
+    
+    // Preço Antigo (se houver)
+    if (formattedData.precoAntigoStr) {
+        ctx.fillStyle = '#999999';
+        ctx.font = '36px Outfit, sans-serif';
+        ctx.textAlign = 'center';
+        const oldPriceText = `De R$ ${formattedData.precoAntigoStr}`;
+        ctx.fillText(oldPriceText, 540, priceY - 70);
+        
+        // Riscar preço antigo
+        const textWidth = ctx.measureText(oldPriceText).width;
+        ctx.beginPath();
+        ctx.strokeStyle = '#999999';
+        ctx.lineWidth = 3;
+        ctx.moveTo(540 - textWidth/2, priceY - 82);
+        ctx.lineTo(540 + textWidth/2, priceY - 82);
+        ctx.stroke();
+    }
+
+    // Preço Atual
+    ctx.fillStyle = '#ef4444'; // Vermelho preço
+    ctx.font = 'bold 90px Outfit, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`R$ ${formattedData.precoAtualStr}`, 540, priceY + 20);
+
+    // 6. Nome do Produto (Abaixo do card)
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textAlign = 'center';
+    ctx.font = '600 50px Outfit, sans-serif';
+    
+    // Quebra de linha automática
+    const productName = product.productName;
+    wrapText(ctx, productName, 540, cardY + cardHeight + 80, 900, 65, 3); // Max 3 linhas
+
+    // 7. Call to Action (Links)
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 40px Outfit, sans-serif';
+    ctx.fillStyle = '#FFFFFF';
+    
+    const footerStartY = 1600;
+    const spacer = 140;
+
+    // Link Comprar
+    ctx.fillText("🛒 Comprar:", 100, footerStartY);
+    // Linha pontilhada/retângulo para colar link
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 4;
+    ctx.setLineDash([10, 10]);
+    ctx.strokeRect(90, footerStartY + 20, 900, 80);
+    ctx.setLineDash([]); // Reset
+
+    // Link Grupo
+    ctx.fillText("✅ Grupo:", 100, footerStartY + spacer + 20);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.setLineDash([10, 10]);
+    ctx.strokeRect(90, footerStartY + spacer + 40, 900, 80);
+
+    // 8. Compartilhar
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(async (blob) => {
+            if (!blob) {
+                reject(new Error('Canvas to Blob falhou'));
+                return;
+            }
+
+            const file = new File([blob], 'story-promocao.png', { type: 'image/png' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Promoção Itambé',
+                        text: 'Olha essa oferta!'
+                    });
+                    resolve(true); // Compartilhado com sucesso (ou aberto dialog)
+                } catch (shareError) {
+                    if (shareError.name === 'AbortError') {
+                         resolve(false); // Usuário cancelou, mas não é erro técnico
+                    } else {
+                        // Se falhar o share, tenta download
+                        tryDownload(blob, product.productName, resolve);
+                    }
+                }
+            } else {
+                // Fallback Desktop
+                tryDownload(blob, product.productName, resolve);
+            }
+        }, 'image/png');
+    });
+}
+
+function tryDownload(blob, name, resolve) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `story-${name.substring(0, 20)}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    resolve(true);
+}
+
+// Função auxiliar para quebra de texto
+function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+    const words = text.split(' ');
+    let line = '';
+    let lineCount = 1;
+
+    for(let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        
+        if (testWidth > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+            lineCount++;
+            if (lineCount > maxLines) {
+                // Adicionar reticências na linha anterior se exceder
+                // (Isso é uma simplificação, idealmente cortaria o texto)
+                const lastLineWithEllipsis = line.trim() + '...';
+                // ctx.fillText(lastLineWithEllipsis, x, y); // Desenha a ultima parte
+                return;
+            }
+        } else {
+            line = testLine;
+        }
+    }
+    ctx.fillText(line.trim(), x, y);
+}
