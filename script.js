@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             wa: msgLinesWA.filter(l => l !== null).join('\n'),
             ig: msgLinesIG.filter(l => l !== null).join('\n'),
             category,
+            data, // Returning data to access price and other fields
             valid: true
         };
     };
@@ -344,11 +345,11 @@ async function generateStoryImage(product, formattedData) {
     canvas.width = 1080;
     canvas.height = 1920;
 
-    // 1. Fundo Gradiente Moderno
+    // 1. Fundo Gradiente Moderno (Mais contraste: Dark Blue/Purple)
     const gradient = ctx.createLinearGradient(0, 0, 0, 1920);
-    // Roxo (#2b1055) -> Rosa (#7597de) -> Azul (#2b1055) - Exemplo vibrante
-    gradient.addColorStop(0, '#4facfe');
-    gradient.addColorStop(1, '#00f2fe');
+    // #1e3c72 (Dark Blue) -> #2a5298 (Lighter Blue) - Midnight Blue theme
+    gradient.addColorStop(0, '#1e3c72');
+    gradient.addColorStop(1, '#2a5298');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 1080, 1920);
 
@@ -356,10 +357,10 @@ async function generateStoryImage(product, formattedData) {
     
     // 2. Cabeçalho
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 50px Outfit, sans-serif';
+    ctx.font = 'bold 70px Outfit, sans-serif'; // Aumentado
     ctx.textAlign = 'center';
-    ctx.shadowColor = "rgba(0,0,0,0.3)";
-    ctx.shadowBlur = 10;
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 15;
     ctx.fillText("📢 Itambé Promoções", 540, 150);
     ctx.shadowBlur = 0; // Reset shadow
 
@@ -420,11 +421,11 @@ async function generateStoryImage(product, formattedData) {
     const priceY = cardY + cardHeight - 160;
     
     // Preço Antigo (se houver)
-    if (formattedData.precoAntigoStr) {
+    if (formattedData.data.precoAntigoStr) { // Alterado para acessar formattedData.data
         ctx.fillStyle = '#999999';
-        ctx.font = '36px Outfit, sans-serif';
+        ctx.font = '40px Outfit, sans-serif';
         ctx.textAlign = 'center';
-        const oldPriceText = `De R$ ${formattedData.precoAntigoStr}`;
+        const oldPriceText = `De R$ ${formattedData.data.precoAntigoStr}`;
         ctx.fillText(oldPriceText, 540, priceY - 70);
         
         // Riscar preço antigo
@@ -441,7 +442,7 @@ async function generateStoryImage(product, formattedData) {
     ctx.fillStyle = '#ef4444'; // Vermelho preço
     ctx.font = 'bold 90px Outfit, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`R$ ${formattedData.precoAtualStr}`, 540, priceY + 20);
+    ctx.fillText(`R$ ${formattedData.data.precoAtualStr}`, 540, priceY + 20); // Alterado para formattedData.data
 
     // 6. Nome do Produto (Abaixo do card)
     ctx.fillStyle = '#FFFFFF';
@@ -454,11 +455,11 @@ async function generateStoryImage(product, formattedData) {
 
     // 7. Call to Action (Links)
     ctx.textAlign = 'left';
-    ctx.font = 'bold 40px Outfit, sans-serif';
+    ctx.font = 'bold 65px Outfit, sans-serif'; // Aumentado
     ctx.fillStyle = '#FFFFFF';
     
     const footerStartY = 1600;
-    const spacer = 140;
+    const spacer = 160; // Aumentado espaço
 
     // Link Comprar
     ctx.fillText("🛒 Comprar:", 100, footerStartY);
