@@ -21,25 +21,17 @@ if (!APP_ID || !SECRET_KEY) {
 app.post('/api/best-sellers', async (req, res) => {
     try {
         const timestamp = Math.floor(Date.now() / 1000);
-        
         const query = `query MaisVendidos($limite:Int,$pagina:Int){productOfferV2(limit:$limite,page:$pagina,sortType:1,listType:0){nodes{productName productLink offerLink price commission commissionRate imageUrl shopName}}}`;
         const variables = { limite: 10, pagina: 0 };
-        
-        const bodyContent = JSON.stringify({
-            query: query,
-            variables: variables
-        });
-        
+        const bodyContent = JSON.stringify({ query, variables });
         const factor = APP_ID + timestamp + bodyContent + SECRET_KEY;
         const signature = CryptoJS.SHA256(factor).toString();
-        
         const response = await axios.post('https://open-api.affiliate.shopee.com.br/graphql', bodyContent, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `SHA256 Credential=${APP_ID},Timestamp=${timestamp},Signature=${signature}`
             }
         });
-
         res.json(response.data);
     } catch (error) {
         console.error('Erro na requisição Shopee:', error.response ? error.response.data : error.message);

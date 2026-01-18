@@ -14,7 +14,6 @@ html, body {
     --text-main: #ffffff;
     --text-muted: #a0a0b0;
     --success: #00e676;
-    
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     --font-main: 'Outfit', sans-serif;
 }
@@ -375,8 +374,6 @@ input[type="checkbox"]:checked::after {
     transition: opacity 0.3s;
     font-weight: 600;
 }
-
-/* ... existing code ... */
 
 .products-list {
     display: grid;
