@@ -290,12 +290,12 @@ async function generateStoryImage(product, formattedData) {
     ctx.textAlign = 'center';
     ctx.shadowColor = "rgba(0,0,0,0.5)";
     ctx.shadowBlur = 15;
-    ctx.fillText("📢 Itambé Promoções", 540, 220);
+    ctx.fillText("📢 Itambé Promoções", 540, 150);
     ctx.shadowBlur = 0;
 
-    const cardY = 320;
-    const cardHeight = 1050;
-    const cardWidth = 940;
+    const cardY = 230;
+    const cardHeight = 1250;
+    const cardWidth = 1000;
     const cardX = (1080 - cardWidth) / 2;
     ctx.fillStyle = '#FFFFFF';
     ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 40);
@@ -316,9 +316,9 @@ async function generateStoryImage(product, formattedData) {
             img.src = product.imageUrl;
         });
 
-        const imgAreaMargin = 40;
+        const imgAreaMargin = 30;
         const imgAreaW = cardWidth - (imgAreaMargin * 2);
-        const imgAreaH = cardHeight - 450; // Aumentado espaço para texto e preço dentro do card
+        const imgAreaH = cardHeight - 380; 
         const imgAreaX = cardX + imgAreaMargin;
         const imgAreaY = cardY + imgAreaMargin;
         const scale = Math.min(imgAreaW / img.width, imgAreaH / img.height);
@@ -332,20 +332,18 @@ async function generateStoryImage(product, formattedData) {
         ctx.fillStyle = '#cccccc';
         ctx.font = '40px Outfit, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText("Imagem indisponível", 540, cardY + 300);
+        ctx.fillText("Imagem indisponível", 540, cardY + 400);
     }
 
-    // Nome do Produto (Dentro do card, abaixo da imagem)
     ctx.fillStyle = '#333333';
     ctx.textAlign = 'center';
-    ctx.font = '600 45px Outfit, sans-serif';
+    ctx.font = '600 48px Outfit, sans-serif';
     const productName = product.productName;
-    const nameY = cardY + cardHeight - 340;
+    const nameY = cardY + cardHeight - 270;
     wrapText(ctx, productName, 540, nameY, cardWidth - 80, 55, 3);
 
-    // Preço Atual (Abaixo do nome, dentro do card)
     ctx.fillStyle = '#ef4444';
-    ctx.font = 'bold 100px Outfit, sans-serif';
+    ctx.font = 'bold 110px Outfit, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(`R$ ${formattedData.data.precoAtualStr}`, 540, cardY + cardHeight - 80);
 
