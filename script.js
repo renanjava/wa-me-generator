@@ -296,37 +296,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnIG.addEventListener('click', async () => {
                     fillForm();
                     
-                    // Allow DOM update if needed, then read
-                    setTimeout(async () => {
-                        const result = getFormattedText();
-                        if (!result.valid) return;
+                    const result = getFormattedText();
+                    if (!result.valid) return;
 
-                        const text = result.ig;
-                        const encodedUrl = encodeURIComponent(product.imageUrl);
-                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                        
-                        try {
-                            await navigator.clipboard.writeText(text);
-                            btnIG.innerHTML = '📋 Copiado!';
-                            setTimeout(() => btnIG.innerHTML = `
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" stroke-width="2"/>
-                                    <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/>
-                                    <path d="M17.5 6.5H17.51" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                Instagram
-                            `, 2000);
-                        } catch (err) {
-                            console.warn('Clipboard failed', err);
-                        }
+                    const text = result.ig;
+                    // Use the product image URL as requested
+                    const storyImageUrl = product.imageUrl;
+                    const igAppLink = `instagram://story-camera?backgroundImageUrl=${encodeURIComponent(storyImageUrl)}`;
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        btnIG.innerHTML = '📋 Copiado!';
+                        setTimeout(() => btnIG.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/>
+                                <path d="M17.5 6.5H17.51" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Instagram
+                        `, 2000);
+                    } catch (err) {
+                        console.warn('Clipboard failed', err);
+                    }
 
-                        if (isMobile) {
-                            window.location.href = `instagram://story-camera?backgroundImageUrl=${encodedUrl}`;
-                        } else {
-                            const w = window.open(`https://www.instagram.com/create/story/?media=${encodedUrl}`, '_blank');
-                            if (!w) alert("Pop-up bloqueado!");
-                        }
-                    }, 50);
+                    if (isMobile) {
+                        window.location.href = igAppLink;
+                    } else {
+                        // Desktop fallback (optional, but good to keep)
+                        const encodedUrl = encodeURIComponent(storyImageUrl);
+                        const w = window.open(`https://www.instagram.com/create/story/?media=${encodedUrl}`, '_blank');
+                        if (!w) alert("Pop-up bloqueado!");
+                    }
                 });
 
                 actions.appendChild(btnWA);
