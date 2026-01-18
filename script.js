@@ -38,10 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
         generateMessage();
     };
 
-    const generateMessage = () => {
+    const getFormattedText = () => {
         const rawCurrentPrice = parseFloat(inputs.precoAtual.value.replace(',', '.'));
         const rawOldPrice = parseFloat(inputs.precoAntigo.value.replace(',', '.'));
         
+        // Show/Hide Parcelamento UI
         if (!isNaN(rawCurrentPrice) && rawCurrentPrice >= 50) {
             parcelamentoContainer.classList.remove('hidden');
         } else {
@@ -49,9 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isNaN(rawCurrentPrice)) {
-            messageOutput.textContent = 'Aguardando preço do produto...';
-            priceTag.textContent = 'Aguardando preço...';
-            return;
+            return { wa: null, ig: null, valid: false };
         }
 
         const data = {
@@ -80,29 +79,27 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (rawCurrentPrice >= 150 && rawCurrentPrice <= 500) { category = "CARO"; }
         else if (rawCurrentPrice > 500) { category = "MUITO CARO"; }
 
-        const msgLines = [
+        // --- WhatsApp Generation ---
+        const msgLinesWA = [
             FIXED.header,
             ``
         ];
-
         if (data.titulo) {
-            msgLines.push(`👉 *${data.titulo}*`);
-            msgLines.push(``);
+            msgLinesWA.push(`👉 *${data.titulo}*`);
+            msgLinesWA.push(``);
         }
-
-        msgLines.push(`📦 *${data.nomeProduto}*`);
-        msgLines.push(``);
-
+        msgLinesWA.push(`📦 *${data.nomeProduto}*`);
+        msgLinesWA.push(``);
         if (data.precoAntigoStr) {
-            msgLines.push(`~💰 De R$ ${data.precoAntigoStr}~`);
+            msgLinesWA.push(`~💰 De R$ ${data.precoAntigoStr}~`);
         }
-        msgLines.push(`💰 Por *R$ ${data.precoAtualStr}*`);
+        msgLinesWA.push(`💰 Por *R$ ${data.precoAtualStr}*`);
 
-        if (parcelamentoStr) msgLines.push(parcelamentoStr);
-        if (data.frete) msgLines.push(data.frete);
-        if (data.cupom) msgLines.push(data.cupom);
+        if (parcelamentoStr) msgLinesWA.push(parcelamentoStr);
+        if (data.frete) msgLinesWA.push(data.frete);
+        if (data.cupom) msgLinesWA.push(data.cupom);
 
-        msgLines.push(
+        msgLinesWA.push(
             ``,
             `🛒 Comprar agora:`,
             data.link,
@@ -111,19 +108,61 @@ document.addEventListener('DOMContentLoaded', () => {
             FIXED.linkGrupo
         );
 
-        messageOutput.textContent = msgLines.filter(l => l !== null).join('\n');
-        priceTag.textContent = category;
+        // --- Instagram Generation (Simplified) ---
+        const msgLinesIG = [];
+        // Only Price, Affiliate Link, Group Link
+        msgLinesIG.push(`� Por R$ ${data.precoAtualStr}`);
+        
+        msgLinesIG.push(
+            ``,
+            `🛒 Comprar agora:`,
+            data.link
+        );
+
+        msgLinesIG.push(
+            ``,
+            `✅ Grupo no WhatsApp:`,
+            FIXED.linkGrupo
+        );
+
+        return {
+            wa: msgLinesWA.filter(l => l !== null).join('\n'),
+            ig: msgLinesIG.filter(l => l !== null).join('\n'),
+            category,
+            valid: true
+        };
     };
+
+    const generateMessage = () => {
+        const result = getFormattedText();
+        
+        if (!result.valid) {
+            if (messageOutput) messageOutput.textContent = 'Aguardando preço do produto...';
+            if (priceTag) priceTag.textContent = 'Aguardando preço...';
+            return;
+        }
+
+        if (messageOutput) messageOutput.textContent = result.wa;
+        if (priceTag) priceTag.textContent = result.category;
+    };
+
 
     Object.values(inputs).forEach(input => input.addEventListener('input', generateMessage));
     generateMessage();
 
-    btnSend.addEventListener('click', () => {
-        const url = `https://wa.me/5544988602881?text=${encodeURIComponent(messageOutput.textContent)}`;
-        window.open(url, '_blank');
-        
-        resetForm();
-    });
+    if (btnSend) {
+        btnSend.addEventListener('click', () => {
+            const result = getFormattedText();
+            if (result.valid) {
+                const url = `https://wa.me/5544988602881?text=${encodeURIComponent(result.wa)}`;
+                window.open(url, '_blank');
+                resetForm();
+            }
+        });
+    }
+    
+    // ... JSON Loading Logic ...
+
 
     const btnLoadJson = document.getElementById('btnLoadJson');
     const jsonInput = document.getElementById('jsonInput');
@@ -240,44 +279,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 // WA Action
                 btnWA.addEventListener('click', () => {
                     fillForm();
-                    const text = messageOutputWA.textContent;
-                    const url = `https://wa.me/5544988602881?text=${encodeURIComponent(text)}`;
-                    window.open(url, '_blank');
-                    
-                    // Visual Feedback
-                    btnWA.style.opacity = '0.7';
-                    setTimeout(() => btnWA.style.opacity = '1', 300);
+                    // Slight timeout to respect the data flow, although getFormattedText pulls from inputs directly.
+                    // inputs are updated by fillForm -> generateMessage (optional but cleaner to have inputs set).
+                    setTimeout(() => {
+                        const result = getFormattedText();
+                        if (!result.valid) {
+                            alert("Erro com os dados do produto.");
+                            return;
+                        }
+                        const url = `https://wa.me/5544988602881?text=${encodeURIComponent(result.wa)}`;
+                        window.open(url, '_blank');
+                    }, 50);
                 });
 
                 // IG Action
                 btnIG.addEventListener('click', async () => {
                     fillForm();
-                    const text = messageOutputIG.textContent;
                     
-                    // 1. Copy text to clipboard (essential since deep links don't carry caption text automatically)
-                    try {
-                        await navigator.clipboard.writeText(text);
-                        // Visual feedback on button
-                        const originalHtml = btnIG.innerHTML;
-                        btnIG.innerHTML = '📋 Texto Copiado!';
-                        setTimeout(() => btnIG.innerHTML = originalHtml, 2000);
-                    } catch (err) {
-                        console.warn('Clipboard failed', err);
-                    }
+                    // Allow DOM update if needed, then read
+                    setTimeout(async () => {
+                        const result = getFormattedText();
+                        if (!result.valid) return;
 
-                    // 2. Open Instagram Story Editor with Background Image
-                    // Based on user request: mobile deep link or web link
-                    const encodedUrl = encodeURIComponent(product.imageUrl);
-                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        const text = result.ig;
+                        const encodedUrl = encodeURIComponent(product.imageUrl);
+                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        
+                        try {
+                            await navigator.clipboard.writeText(text);
+                            btnIG.innerHTML = '📋 Copiado!';
+                            setTimeout(() => btnIG.innerHTML = `
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/>
+                                    <path d="M17.5 6.5H17.51" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Instagram
+                            `, 2000);
+                        } catch (err) {
+                            console.warn('Clipboard failed', err);
+                        }
 
-                    if (isMobile) {
-                        // Mobile App Deep Link
-                        // Note: This relies on the image URL being accessible by Instagram's servers or app.
-                        window.location.href = `instagram://story-camera?backgroundImageUrl=${encodedUrl}`;
-                    } else {
-                        // Web Fallback (Desktop)
-                        window.open(`https://www.instagram.com/create/story/?media=${encodedUrl}`, '_blank');
-                    }
+                        if (isMobile) {
+                            window.location.href = `instagram://story-camera?backgroundImageUrl=${encodedUrl}`;
+                        } else {
+                            const w = window.open(`https://www.instagram.com/create/story/?media=${encodedUrl}`, '_blank');
+                            if (!w) alert("Pop-up bloqueado!");
+                        }
+                    }, 50);
                 });
 
                 actions.appendChild(btnWA);
