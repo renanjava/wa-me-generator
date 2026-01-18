@@ -231,9 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const result = getFormattedText();
                     if (!result.valid) return;
 
-                    const linkText = `Link da oferta: ${product.offerLink}\nLink do grupo: https://chat.whatsapp.com/G4cttd3Ykv0IjQH00i3LVo`;
                     try {
-                        await navigator.clipboard.writeText(linkText);
+                        await navigator.clipboard.writeText(product.offerLink);
                     } catch (err) {
                         console.warn('Não foi possível copiar:', err);
                     }
