@@ -357,7 +357,7 @@ async function generateStoryImage(product, formattedData) {
     const footerStartY = 1520;
     const spacer = 130;
     ctx.fillText("🛒 Comprar: ➜", 100, footerStartY);
-    ctx.fillText("✅ Grupo: ➜", 100, footerStartY + spacer);
+    ctx.fillText("✅ Mande mensagem para entrar no grupo", 100, footerStartY + spacer);
 
     return new Promise((resolve, reject) => {
         canvas.toBlob(async (blob) => {
