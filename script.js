@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const rawCurrentPrice = parseFloat(inputs.precoAtual.value.replace(',', '.'));
         const rawOldPrice = parseFloat(inputs.precoAntigo.value.replace(',', '.'));
         
-        // Show/Hide Parcelamento UI
         if (!isNaN(rawCurrentPrice) && rawCurrentPrice >= 50) {
             parcelamentoContainer.classList.remove('hidden');
         } else {
@@ -79,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (rawCurrentPrice >= 150 && rawCurrentPrice <= 500) { category = "CARO"; }
         else if (rawCurrentPrice > 500) { category = "MUITO CARO"; }
 
-        // --- WhatsApp Generation ---
         const msgLinesWA = [
             FIXED.header,
             ``
@@ -108,10 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
             FIXED.linkGrupo
         );
 
-        // --- Instagram Generation (Simplified) ---
         const msgLinesIG = [];
-        // Only Price, Affiliate Link, Group Link
-        msgLinesIG.push(`� Por R$ ${data.precoAtualStr}`);
+        msgLinesIG.push(`🔥 Por R$ ${data.precoAtualStr}`);
         
         msgLinesIG.push(
             ``,
@@ -160,9 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
-    // ... JSON Loading Logic ...
-
 
     const btnLoadJson = document.getElementById('btnLoadJson');
     const jsonInput = document.getElementById('jsonInput');
@@ -203,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const commission = product.commission ? `(Comissão: R$ ${parseFloat(product.commission).toFixed(2)})` : '';
                 
-                // Larger image container
                 const imgContainer = document.createElement('div');
                 imgContainer.className = 'product-image-container';
                 if (product.imageUrl) {
@@ -215,14 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     imgContainer.innerHTML = '<span style="color: #ccc;">Sem imagem</span>';
                 }
 
-                // Info container
                 const info = document.createElement('div');
                 info.className = 'product-info';
                 
                 const title = document.createElement('div');
                 title.className = 'product-title';
                 title.textContent = product.productName;
-                title.title = product.productName; // tooltip
+                title.title = product.productName; 
                 
                 const price = document.createElement('div');
                 price.className = 'product-price';
@@ -236,11 +227,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 info.appendChild(price);
                 info.appendChild(commDiv);
 
-                // Actions container
                 const actions = document.createElement('div');
                 actions.className = 'product-actions';
 
-                // WA Button
                 const btnWA = document.createElement('button');
                 btnWA.type = 'button';
                 btnWA.className = 'btn-primary btn-sm btn-whatsapp';
@@ -251,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     WhatsApp
                 `;
 
-                // IG Button
                 const btnIG = document.createElement('button');
                 btnIG.type = 'button';
                 btnIG.className = 'btn-primary btn-sm btn-instagram';
@@ -264,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     Instagram
                 `;
 
-                // Fill Form Helper
                 const fillForm = () => {
                     inputs.titulo.value = "";
                     inputs.nomeProduto.value = product.productName;
@@ -276,11 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     generateMessage();
                 };
 
-                // WA Action
                 btnWA.addEventListener('click', () => {
                     fillForm();
-                    // Slight timeout to respect the data flow, although getFormattedText pulls from inputs directly.
-                    // inputs are updated by fillForm -> generateMessage (optional but cleaner to have inputs set).
                     setTimeout(() => {
                         const result = getFormattedText();
                         if (!result.valid) {
@@ -292,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 50);
                 });
 
-                // IG Action
                 btnIG.addEventListener('click', async () => {
                     fillForm();
                     
@@ -300,33 +283,51 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!result.valid) return;
 
                     const text = result.ig;
-                    // Use the product image URL as requested
                     const storyImageUrl = product.imageUrl;
-                    const igAppLink = `instagram://story-camera?backgroundImageUrl=${encodeURIComponent(storyImageUrl)}`;
-                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                    
+
                     try {
                         await navigator.clipboard.writeText(text);
+                        const originalBtnContent = btnIG.innerHTML;
                         btnIG.innerHTML = '📋 Copiado!';
-                        setTimeout(() => btnIG.innerHTML = `
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" stroke-width="2"/>
-                                <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/>
-                                <path d="M17.5 6.5H17.51" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            Instagram
-                        `, 2000);
-                    } catch (err) {
-                        console.warn('Clipboard failed', err);
-                    }
+                        setTimeout(() => btnIG.innerHTML = originalBtnContent, 2000);
+                        
+                        if (navigator.share && storyImageUrl) {
+                            try {
+                                const response = await fetch(storyImageUrl);
+                                const blob = await response.blob();
+                                const file = new File([blob], 'produto.png', { type: blob.type });
 
-                    if (isMobile) {
-                        window.location.href = igAppLink;
-                    } else {
-                        // Desktop fallback (optional, but good to keep)
-                        const encodedUrl = encodeURIComponent(storyImageUrl);
-                        const w = window.open(`https://www.instagram.com/create/story/?media=${encodedUrl}`, '_blank');
-                        if (!w) alert("Pop-up bloqueado!");
+                                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                                    await navigator.share({
+                                        files: [file],
+                                        title: 'Compartilhar Produto',
+                                        text: text 
+                                    });
+                                } else {
+                                    throw new Error('Sharing files not supported');
+                                }
+                            } catch (shareError) {
+                                console.warn('Share API failed, falling back to deep link/clipboard', shareError);
+                                
+                                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                                if (isMobile) {
+                                     window.location.href = `instagram://story-camera`;
+                                } else {
+                                     window.open(`https://www.instagram.com/`, '_blank');
+                                }
+                            }
+                        } else {
+                            throw new Error('Web Share API not supported');
+                        }
+
+                    } catch (err) {
+                        console.warn('Clipboard or Share failed', err);
+                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                        if (isMobile) {
+                                window.location.href = `instagram://story-camera`;
+                        } else {
+                                window.open(`https://www.instagram.com/`, '_blank');
+                        }
                     }
                 });
 
