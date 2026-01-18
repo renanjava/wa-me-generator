@@ -176,8 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const commission = product.commission ? `(Comissão: R$ ${parseFloat(product.commission).toFixed(2)})` : '';
                 
+                const imgTag = product.imageUrl ? `<img src="${product.imageUrl}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #eee;">` : '';
+
                 btn.innerHTML = `
                     <div style="font-weight: bold; color: #4b5563;">#${index + 1}</div>
+                    ${imgTag}
                     <div style="flex: 1;">
                         <div style="font-weight: 600; font-size: 14px; color: #1f2937;">${product.productName.substring(0, 50)}...</div>
                         <div style="font-size: 12px; color: #6b7280;">Preço: R$ ${product.price} <span style="color: #10b981;">${commission}</span></div>
