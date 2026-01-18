@@ -291,12 +291,12 @@ async function generateStoryImage(product, formattedData) {
     ctx.textAlign = 'center';
     ctx.shadowColor = "rgba(0,0,0,0.5)";
     ctx.shadowBlur = 15;
-    ctx.fillText("📢 Itambé Promoções", 540, 150);
+    ctx.fillText("📢 Itambé Promoções", 540, 220);
     ctx.shadowBlur = 0;
 
-    const cardY = 300;
-    const cardHeight = 900;
-    const cardWidth = 900;
+    const cardY = 320;
+    const cardHeight = 1050;
+    const cardWidth = 940;
     const cardX = (1080 - cardWidth) / 2;
     ctx.fillStyle = '#FFFFFF';
     ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 40);
@@ -317,9 +317,9 @@ async function generateStoryImage(product, formattedData) {
             img.src = product.imageUrl;
         });
 
-        const imgAreaMargin = 50;
+        const imgAreaMargin = 40;
         const imgAreaW = cardWidth - (imgAreaMargin * 2);
-        const imgAreaH = cardHeight - 350;
+        const imgAreaH = cardHeight - 300;
         const imgAreaX = cardX + imgAreaMargin;
         const imgAreaY = cardY + imgAreaMargin;
         const scale = Math.min(imgAreaW / img.width, imgAreaH / img.height);
@@ -333,35 +333,35 @@ async function generateStoryImage(product, formattedData) {
         ctx.fillStyle = '#cccccc';
         ctx.font = '40px Outfit, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText("Imagem indisponível", 540, cardY + 300);
+        ctx.fillText("Imagem indisponível", 540, cardY + 400);
     }
 
-    const priceY = cardY + cardHeight - 160;
+    const priceY = cardY + cardHeight - 100;
     if (formattedData.data.precoAntigoStr) {
         ctx.fillStyle = '#999999';
         ctx.font = '40px Outfit, sans-serif';
         ctx.textAlign = 'center';
         const oldPriceText = `De R$ ${formattedData.data.precoAntigoStr}`;
-        ctx.fillText(oldPriceText, 540, priceY - 70);
+        ctx.fillText(oldPriceText, 540, priceY - 95);
         const textWidth = ctx.measureText(oldPriceText).width;
         ctx.beginPath();
         ctx.strokeStyle = '#999999';
         ctx.lineWidth = 3;
-        ctx.moveTo(540 - textWidth/2, priceY - 82);
-        ctx.lineTo(540 + textWidth/2, priceY - 82);
+        ctx.moveTo(540 - textWidth/2, priceY - 107);
+        ctx.lineTo(540 + textWidth/2, priceY - 107);
         ctx.stroke();
     }
 
     ctx.fillStyle = '#ef4444';
-    ctx.font = 'bold 90px Outfit, sans-serif';
+    ctx.font = 'bold 100px Outfit, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`R$ ${formattedData.data.precoAtualStr}`, 540, priceY + 20);
+    ctx.fillText(`R$ ${formattedData.data.precoAtualStr}`, 540, priceY + 15);
 
     ctx.fillStyle = '#FFFFFF';
     ctx.textAlign = 'center';
     ctx.font = '600 50px Outfit, sans-serif';
     const productName = product.productName;
-    wrapText(ctx, productName, 540, cardY + cardHeight + 80, 900, 65, 3);
+    wrapText(ctx, productName, 540, cardY + cardHeight + 80, 940, 65, 3);
 
     ctx.textAlign = 'left';
     ctx.font = 'bold 65px Outfit, sans-serif';
