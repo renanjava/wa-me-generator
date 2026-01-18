@@ -290,11 +290,11 @@ async function generateStoryImage(product, formattedData) {
     ctx.textAlign = 'center';
     ctx.shadowColor = "rgba(0,0,0,0.5)";
     ctx.shadowBlur = 15;
-    ctx.fillText("📢 Itambé Promoções", 540, 150);
+    ctx.fillText("📢 Itambé Promoções", 540, 250);
     ctx.shadowBlur = 0;
 
-    const cardY = 230;
-    const cardHeight = 1250;
+    const cardY = 320;
+    const cardHeight = 1200;
     const cardWidth = 1000;
     const cardX = (1080 - cardWidth) / 2;
     ctx.fillStyle = '#FFFFFF';
@@ -347,14 +347,11 @@ async function generateStoryImage(product, formattedData) {
     ctx.textAlign = 'center';
     ctx.fillText(`R$ ${formattedData.data.precoAtualStr}`, 540, cardY + cardHeight - 80);
 
-    // 7. Call to Action (Links) - Fora do card
     ctx.textAlign = 'left';
     ctx.font = 'bold 65px Outfit, sans-serif';
     ctx.fillStyle = '#FFFFFF';
-    const footerStartY = 1520;
-    const spacer = 130;
+    const footerStartY = 1650;
     ctx.fillText("🛒 Comprar: ➜", 100, footerStartY);
-    //ctx.fillText("✅ Mande mensagem para entrar no grupo", 100, footerStartY + spacer);
 
     return new Promise((resolve, reject) => {
         canvas.toBlob(async (blob) => {
