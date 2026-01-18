@@ -350,8 +350,6 @@ async function generateStoryImage(product, formattedData) {
     ctx.textAlign = 'left';
     ctx.font = 'bold 65px Outfit, sans-serif';
     ctx.fillStyle = '#FFFFFF';
-    const footerStartY = 1650;
-    ctx.fillText("🛒 Comprar: ➜", 100, footerStartY);
 
     return new Promise((resolve, reject) => {
         canvas.toBlob(async (blob) => {
