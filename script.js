@@ -340,7 +340,7 @@ async function generateStoryImage(product, formattedData) {
     ctx.font = '600 48px Outfit, sans-serif';
     const productName = product.productName;
     const nameY = cardY + cardHeight - 270;
-    wrapText(ctx, productName, 540, nameY, cardWidth - 80, 55, 3);
+    wrapText(ctx, productName, 540, nameY, cardWidth - 80, 55, 2);
 
     ctx.fillStyle = '#ef4444';
     ctx.font = 'bold 110px Outfit, sans-serif';
