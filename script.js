@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLoadJson = document.getElementById('btnLoadJson');
     const jsonInput = document.getElementById('jsonInput');
     const productsList = document.getElementById('productsList');
+    const btnFetchHighCommission = document.getElementById('btnFetchHighCommission');
 
     btnLoadJson.addEventListener('click', () => {
         const rawJson = jsonInput.value.trim();
@@ -162,7 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
             nodes.forEach((product) => {
                 const card = document.createElement('div');
                 card.className = 'product-card-item';
-                const commission = product.commission ? `(Comissão: R$ ${parseFloat(product.commission).toFixed(2)})` : '';
+                
+                // Formatação dos novos dados
+                const commissionVal = product.commission ? parseFloat(product.commission).toFixed(2) : '0.00';
+                const commissionPercentage = product.commissionRate ? (parseFloat(product.commissionRate) * 100).toFixed(1) + '%' : '';
+                const commissionLabel = `Ganho: R$ ${commissionVal} (${commissionPercentage})`;
+
                 const imgContainer = document.createElement('div');
                 imgContainer.className = 'product-image-container';
                 if (product.imageUrl) {
@@ -176,16 +182,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const info = document.createElement('div');
                 info.className = 'product-info';
+                
                 const title = document.createElement('div');
                 title.className = 'product-title';
                 title.textContent = product.productName;
                 title.title = product.productName;
+                
                 const price = document.createElement('div');
                 price.className = 'product-price';
                 price.textContent = `R$ ${product.price}`;
+                
                 const commDiv = document.createElement('div');
                 commDiv.className = 'product-commission';
-                commDiv.textContent = commission;
+                commDiv.style.color = '#10b981';
+                commDiv.style.fontWeight = 'bold';
+                commDiv.style.fontSize = '12px';
+                commDiv.textContent = commissionLabel;
+
                 info.appendChild(title);
                 info.appendChild(price);
                 info.appendChild(commDiv);
@@ -269,6 +282,63 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error(e);
             alert("Erro ao ler JSON. Verifique a formatação.");
+        }
+    });
+
+    btnFetchHighCommission.addEventListener('click', async () => {
+        const originalBtnContent = btnFetchHighCommission.innerHTML;
+        btnFetchHighCommission.innerHTML = '⏳ Buscando produtos...';
+        btnFetchHighCommission.disabled = true;
+
+        try {
+            const response = await fetch('http://localhost:3000/api/high-commission', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Falha ao buscar produtos');
+            }
+
+            const data = await response.json();
+            const products = data.data?.productOfferV2?.nodes || [];
+
+            if (products.length === 0) {
+                alert('Nenhum produto encontrado!');
+                return;
+            }
+
+            btnFetchHighCommission.innerHTML = '⏳ Sincronizando com Google Sheets...';
+
+            const responseUpdate = await fetch('http://localhost:3000/api/update-sheets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ products: products })
+            });
+
+            if (!responseUpdate.ok) {
+                const errorData = await responseUpdate.json();
+                throw new Error(errorData.error || 'Falha ao sincronizar');
+            }
+
+            btnFetchHighCommission.innerHTML = '✅ Planilha Atualizada!';
+            
+            alert(`✅ SUCESSO!\n\n${products.length} produtos de alta comissão foram enviados diretamente para a sua planilha Google.\n\nVocê não precisa mais copiar e colar nada!`);
+
+            setTimeout(() => {
+                btnFetchHighCommission.innerHTML = originalBtnContent;
+                btnFetchHighCommission.disabled = false;
+            }, 3000);
+
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('❌ Erro ao buscar produtos. Verifique se o servidor está rodando.');
+            btnFetchHighCommission.innerHTML = originalBtnContent;
+            btnFetchHighCommission.disabled = false;
         }
     });
 });
