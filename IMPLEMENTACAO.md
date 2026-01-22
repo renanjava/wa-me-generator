@@ -24,11 +24,10 @@
 ```javascript
 Shopee API → Google Sheets
 ─────────────────────────────
-productName    → title (coluna B)
+productName    → title (coluna A)
+offerLink      → affiliate_url (coluna B)
 price          → price (coluna C)
-imageUrl       → image_url (coluna F)
-offerLink      → affiliate_url (coluna G)
-commission     → commission (coluna K)
+imageUrl       → image_url (coluna D)
 ```
 
 ## 🔄 Fluxo de Funcionamento
@@ -57,12 +56,12 @@ commission     → commission (coluna K)
 
 ## 📋 Estrutura da Planilha
 
-| A | B | C | D | E | F | G | H | I | J | K |
-|---|---|---|---|---|---|---|---|---|---|---|
-| id | title | price | original_price | discount_% | image_url | affiliate_url | category | active | sales | commission |
-| 1 | Produto 1 | 19.99 | 0 | 0 | https://... | https://... | | TRUE | | 1.60 |
-| 2 | Produto 2 | 29.90 | 0 | 0 | https://... | https://... | | TRUE | | 2.39 |
-| ... | ... | ... | ... | ... | ... | ... | ... | ... | ... | ... |
+| A | B | C | D |
+|---|---|---|---|
+| title | affiliate_url | price | image_url |
+| Produto 1 | https://... | 19.99 | https://... |
+| Produto 2 | https://... | 29.90 | https://... |
+| ... | ... | ... | ... |
 
 ## 🎨 Interface do Usuário
 

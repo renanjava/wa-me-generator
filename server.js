@@ -87,18 +87,11 @@ app.post('/api/update-sheets', async (req, res) => {
             return res.status(400).json({ error: 'URL do Google Web App não configurada no .env' });
         }
 
-        const rows = products.map((product, index) => [
-            index + 1,
+        const rows = products.map((product) => [
             product.productName || '',
-            parseFloat(product.price) || 0,
-            0,
-            0,
-            product.imageUrl || '',
             product.offerLink || '',
-            '',
-            'TRUE',
-            '',
-            parseFloat(product.commission) || 0
+            parseFloat(product.price) || 0,
+            product.imageUrl || ''
         ]);
 
         // Envia os dados. O Apps Script exige seguir redirecionamentos (maxRedirects).

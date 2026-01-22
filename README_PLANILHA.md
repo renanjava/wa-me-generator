@@ -42,17 +42,10 @@ Os dados são organizados nas seguintes colunas:
 
 | Coluna | Campo | Descrição |
 |--------|-------|-----------|
-| A | id | Número sequencial (1, 2, 3...) |
-| B | title | Nome do produto |
+| A | productName | Nome do produto |
+| B | offerLink | Link de afiliado |
 | C | price | Preço atual |
-| D | original_price | Preço original (0 por padrão) |
-| E | discount_percentage | Percentual de desconto (0 por padrão) |
-| F | image_url | URL da imagem do produto |
-| G | affiliate_url | Link de afiliado |
-| H | category | Categoria (vazio por padrão) |
-| I | active | Status ativo (TRUE) |
-| J | sales | Vendas (vazio por padrão) |
-| K | commission | Valor da comissão em R$ |
+| D | imageUrl | URL da imagem do produto |
 
 ## 🔧 Detalhes Técnicos
 
