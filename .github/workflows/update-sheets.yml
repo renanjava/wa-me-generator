@@ -2,9 +2,9 @@ name: Atualizar Planilha Automaticamente
 
 on:
   schedule:
-    # Executa todos os dias às 22:05 (horário de Brasília, UTC-3)
-    # 22:05 BRT = 01:05 UTC do dia seguinte
-    - cron: '10 1 * * *'
+    # Executa toda sexta-feira às 05:30 (horário de Brasília, UTC-3)
+    # 05:30 BRT = 08:30 UTC
+    - cron: '30 8 * * 5'
   # Permite execução manual via GitHub Actions UI
   workflow_dispatch:
 
