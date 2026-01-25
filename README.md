@@ -15,6 +15,7 @@ Este projeto é uma ferramenta web para afiliados da Shopee que desejam gerar ra
 - **Copy to Clipboard**: Copia automaticamente os links para a área de transferência ao clicar no botão de Instagram.
 - **Integração com Web Share API**: Compartilhamento nativo de imagens em dispositivos móveis ou download automático em desktops.
 - **Backend Node.js**: Servidor Express opcional para integrar diretamente com a API de Afiliados da Shopee.
+- **🤖 Automação GitHub Actions**: Atualização automática diária da planilha às 22:00 (horário de Brasília).
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -39,6 +40,19 @@ Este projeto é uma ferramenta web para afiliados da Shopee que desejam gerar ra
 3. **Compartilhamento**:
     - Clique no ícone do **WhatsApp** para abrir o app com o texto pronto.
     - Clique no ícone do **Instagram** para copiar os links, gerar a imagem e abrir as opções de compartilhamento (ou baixar a imagem).
+
+## 🤖 Automação
+
+Este projeto possui automação via GitHub Actions que atualiza a planilha automaticamente todos os dias às 22:00.
+
+📖 **[Leia a documentação completa de automação](README_AUTOMACAO.md)**
+
+Para configurar:
+1. Configure os Secrets no GitHub (SHOPEE_APP_ID, SHOPEE_SECRET_KEY, GOOGLE_WEBAPP_URL)
+2. Faça push do código para o repositório
+3. A automação executará automaticamente no horário configurado
+
+Você também pode executar manualmente via GitHub Actions UI.
 
 ---
 Desenvolvido para **Itambé Promoções**.

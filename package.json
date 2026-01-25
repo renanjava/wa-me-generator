@@ -4,7 +4,8 @@
   "description": "Backend for Shopee API integration",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "update-sheets": "node update-sheets-cron.js"
   },
   "dependencies": {
     "axios": "^1.6.0",

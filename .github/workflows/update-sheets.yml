@@ -1,0 +1,45 @@
+name: Atualizar Planilha Automaticamente
+
+on:
+  schedule:
+    # Executa todos os dias às 22:05 (horário de Brasília, UTC-3)
+    # 22:05 BRT = 01:05 UTC do dia seguinte
+    - cron: '5 1 * * *'
+  # Permite execução manual via GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  update-sheets:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout do repositório
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: 📦 Instalar dependências
+        run: npm ci
+      
+      - name: 💰 Buscar produtos e atualizar planilha
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET_KEY: ${{ secrets.SHOPEE_SECRET_KEY }}
+          GOOGLE_WEBAPP_URL: ${{ secrets.GOOGLE_WEBAPP_URL }}
+        run: npm run update-sheets
+      
+      - name: ✅ Concluído
+        if: success()
+        run: |
+          echo "🎉 Planilha atualizada com sucesso!"
+          echo "⏰ Horário da execução: $(date)"
+      
+      - name: ❌ Falha na execução
+        if: failure()
+        run: |
+          echo "💥 Erro ao atualizar a planilha"
+          echo "⏰ Horário da falha: $(date)"

@@ -4,6 +4,40 @@
 
 Esta funcionalidade permite buscar automaticamente os produtos com maior comissão da Shopee e atualizar sua planilha do Google Sheets com os dados.
 
+**🤖 NOVIDADE**: Agora com automação via GitHub Actions! A planilha é atualizada automaticamente todos os dias às 22:00. Veja [README_AUTOMACAO.md](README_AUTOMACAO.md) para mais detalhes.
+
+## 🔧 Configuração Inicial do Google Apps Script
+
+Para que a automação funcione, você precisa configurar um Google Apps Script que receberá os dados:
+
+### 1. Criar o Script
+
+1. Acesse [Google Apps Script](https://script.google.com/)
+2. Clique em **Novo projeto**
+3. Copie todo o conteúdo do arquivo [`google-apps-script.js`](google-apps-script.js)
+4. Cole no editor do Google Apps Script
+5. Edite a constante `SPREADSHEET_ID` com o ID da sua planilha
+6. Salve o projeto (Ctrl+S)
+
+### 2. Deploy como Web App
+
+1. Clique em **Deploy** → **New deployment**
+2. Clique no ícone de engrenagem ⚙️ → Selecione **Web app**
+3. Configure:
+   - **Description**: "API para atualizar planilha"
+   - **Execute as**: "Me"
+   - **Who has access**: "Anyone"
+4. Clique em **Deploy**
+5. **Copie a URL gerada** (formato: `https://script.google.com/macros/s/XXXXX/exec`)
+6. Use essa URL como `GOOGLE_WEBAPP_URL` nos secrets do GitHub
+
+### 3. Testar o Script
+
+1. No Google Apps Script, selecione a função `testScript`
+2. Clique em **Run** (▶️)
+3. Autorize o script quando solicitado
+4. Verifique se a planilha foi atualizada com dados de teste
+
 ## 🚀 Como Usar
 
 ### 1. Iniciar o Servidor
