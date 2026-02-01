@@ -88,12 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (parcelamentoStr) msgLinesWA.push(parcelamentoStr);
         if (data.frete) msgLinesWA.push(data.frete);
         if (data.cupom) msgLinesWA.push(data.cupom);
-        msgLinesWA.push(``, `🛒 Comprar agora:`, data.link, ``, `✅ Grupo no WhatsApp com as ofertas:`, FIXED.linkGrupo);
+        msgLinesWA.push(``, `🛒 Comprar agora: ${data.link}`, ``, `✅ Grupo no WhatsApp com as ofertas: ${FIXED.linkGrupo}`);
 
         const msgLinesIG = [];
         msgLinesIG.push(`🔥 Por R$ ${data.precoAtualStr}`);
-        msgLinesIG.push(``, `🛒 Comprar agora:`, data.link);
-        msgLinesIG.push(``, `✅ Grupo no WhatsApp:`, FIXED.linkGrupo);
+        msgLinesIG.push(``, `🛒 Comprar agora: ${data.link}`);
+        msgLinesIG.push(``, `✅ Grupo no WhatsApp: ${FIXED.linkGrupo}`);
 
         return {
             wa: msgLinesWA.filter(l => l !== null).join('\n'),
@@ -427,19 +427,69 @@ async function generateStoryImage(product, formattedData) {
                 reject(new Error('Canvas to Blob falhou'));
                 return;
             }
-            const file = new File([blob], 'story-promocao.png', { type: 'image/png' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({ files: [file], title: 'Promoção Itambé', text: 'Olha essa oferta!' });
-                    resolve(true);
-                } catch (shareError) {
-                    if (shareError.name === 'AbortError') resolve(false);
-                    else tryDownload(blob, product.productName, resolve);
-                }
-            } else {
-                tryDownload(blob, product.productName, resolve);
-            }
+            
+            await shareToInstagramStories(blob, product, resolve, reject);
         }, 'image/png');
+    });
+}
+
+async function shareToInstagramStories(blob, product, resolve, reject) {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        try {
+            const file = new File([blob], 'story-promocao.png', { type: 'image/png' });
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: 'Compartilhar no Instagram',
+                    text: 'Promoção Itambé'
+                });
+                resolve(true);
+                return;
+            }
+            
+            const dataUrl = await blobToDataURL(blob);
+            const instagramUrl = `instagram://story-camera`;
+            
+            const tempLink = document.createElement('a');
+            tempLink.href = instagramUrl;
+            tempLink.click();
+            
+            alert('📱 A imagem foi preparada!\n\n1. O Instagram será aberto agora\n2. Quando o Instagram abrir, clique no ícone de galeria\n3. Selecione a imagem que acabou de ser baixada\n4. Publique nos Stories!');
+            
+            tryDownload(blob, product.productName, resolve);
+            
+        } catch (error) {
+            console.error('Erro ao compartilhar:', error);
+            tryDownload(blob, product.productName, resolve);
+        }
+    } else {
+        try {
+            const clipboardItem = new ClipboardItem({ 'image/png': blob });
+            await navigator.clipboard.write([clipboardItem]);
+            
+            alert('✅ Imagem copiada!\n\n📋 A imagem está na área de transferência.\n\nPara publicar:\n1. Abra o Instagram no seu celular ou navegador\n2. Vá em criar Story\n3. Cole a imagem (Ctrl+V)\n4. Publique!\n\n💡 Se preferir, a imagem também será baixada automaticamente.');
+            
+            window.open('https://www.instagram.com/create/story/', '_blank');
+            
+            tryDownload(blob, product.productName, resolve);
+            
+        } catch (error) {
+            console.error('Erro ao copiar:', error);
+            alert('📥 A imagem será baixada.\n\nPara publicar nos Stories:\n1. Abra o Instagram no seu celular\n2. Toque em criar Story\n3. Selecione a imagem baixada da galeria\n4. Publique!');
+            tryDownload(blob, product.productName, resolve);
+        }
+    }
+}
+
+function blobToDataURL(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
     });
 }
 
@@ -447,7 +497,7 @@ function tryDownload(blob, name, resolve) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `story-${name.substring(0, 20)}.png`;
+    a.download = `story-promocao-${name.substring(0, 20)}.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
