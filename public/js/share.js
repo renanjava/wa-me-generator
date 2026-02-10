@@ -1,6 +1,4 @@
-var App = App || {};
-
-App.Share = (function() {
+export const Share = (function() {
 
     async function shareImage(blob) {
         var file = new File([blob], 'story-promocao.png', { type: 'image/png' });

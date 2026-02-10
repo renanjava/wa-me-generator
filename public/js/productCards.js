@@ -1,6 +1,8 @@
-var App = App || {};
+import { Form } from './form.js';
+import { Share } from './share.js';
+import { StoryCanvas } from './storyCanvas.js';
 
-App.ProductCards = (function() {
+export const ProductCards = (function() {
 
     var IG_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="white" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/><path d="M17.5 6.5H17.51" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Instagram';
 
@@ -53,18 +55,18 @@ App.ProductCards = (function() {
         btnIG.innerHTML = IG_ICON;
 
         btnIG.addEventListener('click', async function() {
-            App.Form.fillFormWithProduct(product);
-            var result = App.Form.getFormattedText();
+            Form.fillFormWithProduct(product);
+            var result = Form.getFormattedText();
             if (!result.valid) return;
 
-            await App.Share.copyToClipboard(product.offerLink);
+            await Share.copyToClipboard(product.offerLink);
 
             var originalBtnContent = btnIG.innerHTML;
             btnIG.innerHTML = '⏳ Gerando...';
             btnIG.disabled = true;
 
             try {
-                await App.StoryCanvas.generate(product, result);
+                await StoryCanvas.generate(product, result);
                 btnIG.innerHTML = '✅ Pronto!';
                 setTimeout(function() {
                     btnIG.innerHTML = originalBtnContent;
@@ -119,12 +121,21 @@ App.ProductCards = (function() {
         badge.classList.add('badge--active');
     }
 
+    const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_WEBAPP_URL_BESTSELLERS;
+
     async function loadProducts() {
         var productsList = document.getElementById('productsList');
         productsList.innerHTML = '<p class="loading-state">⏳ Carregando produtos...</p>';
 
+        if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('undefined')) {
+            console.error('❌ ERRO: URL do Google Script não encontrada nas variáveis de ambiente!');
+            productsList.innerHTML = '<p class="error-state">❌ Erro de configuração: VITE_GOOGLE_WEBAPP_URL_BESTSELLERS não definida no .env ou servidor não reiniciado.</p>';
+            return;
+        }
+
         try {
-            var response = await fetch('/api/products');
+            var response = await fetch(GOOGLE_SCRIPT_URL);
+            
             if (!response.ok) throw new Error('Falha ao carregar');
 
             var data = await response.json();
@@ -132,7 +143,7 @@ App.ProductCards = (function() {
             updateLastUpdateBadge(data.meta);
         } catch (error) {
             console.error('Erro ao carregar produtos:', error);
-            productsList.innerHTML = '<p class="error-state">❌ Erro ao carregar produtos. Tente recarregar a página.</p>';
+            productsList.innerHTML = '<p class="error-state">❌ Erro ao carregar produtos. Verifique a URL do Script.</p>';
         }
     }
 

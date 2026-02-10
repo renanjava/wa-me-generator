@@ -1,4 +1,7 @@
+import { Form } from './form.js';
+import { ProductCards } from './productCards.js';
+
 document.addEventListener('DOMContentLoaded', function() {
-    App.Form.init();
-    App.ProductCards.init();
+    Form.init();
+    ProductCards.init();
 });

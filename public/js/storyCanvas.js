@@ -1,6 +1,6 @@
-var App = App || {};
+import { Share } from './share.js';
 
-App.StoryCanvas = (function() {
+export const StoryCanvas = (function() {
     function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
         var words = text.split(' ');
         var line = '';
@@ -53,12 +53,6 @@ App.StoryCanvas = (function() {
         ctx.fillStyle = '#FFFFFF';
         ctx.roundRect(cardX, cardY, cardWidth, cardHeight, 40);
         ctx.fill();
-        ctx.shadowColor = "rgba(0,0,0,0.2)";
-        ctx.shadowBlur = 30;
-        ctx.shadowOffsetY = 20;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
 
         try {
             var img = new Image();
@@ -104,7 +98,7 @@ App.StoryCanvas = (function() {
                     reject(new Error('Canvas to Blob falhou'));
                     return;
                 }
-                var result = await App.Share.shareImage(blob);
+                var result = await Share.shareImage(blob);
                 resolve(result);
             }, 'image/png');
         });

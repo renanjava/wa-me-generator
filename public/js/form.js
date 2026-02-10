@@ -1,6 +1,4 @@
-var App = App || {};
-
-App.Form = (function() {
+export const Form = (function() {
     let inputs = {};
 
     function init() {

@@ -66,7 +66,7 @@ function doGet(e) {
 - Clique em **Implantar > Nova implantação**.
 - Tipo: **Aplicativo da Web**.
 - Quem pode acessar: **Qualquer pessoa**.
-- Copie a URL gerada e coloque no seu `.env` como `GOOGLE_WEBAPP_URL_BESTSELLERS`.
+- Copie a URL gerada e coloque no seu `.env` como `VITE_GOOGLE_WEBAPP_URL_BESTSELLERS`.
 
 ## 📂 Estrutura
 
@@ -78,4 +78,4 @@ function doGet(e) {
 O workflow `update-bestsellers.yml` roda diariamente às 11:40 BRT. Certifique-se de configurar os Secrets no repositório:
 - `SHOPEE_APP_ID`
 - `SHOPEE_SECRET_KEY`
-- `GOOGLE_WEBAPP_URL_BESTSELLERS`
+- `VITE_GOOGLE_WEBAPP_URL_BESTSELLERS`

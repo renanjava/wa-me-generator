@@ -5,7 +5,7 @@ const { sendToSheets } = require('../sheets/sheetsService');
 
 const APP_ID = process.env.SHOPEE_APP_ID;
 const SECRET_KEY = process.env.SHOPEE_SECRET_KEY;
-const WEBAPP_URL = process.env.GOOGLE_WEBAPP_URL_BESTSELLERS;
+const WEBAPP_URL = process.env.VITE_GOOGLE_WEBAPP_URL_BESTSELLERS;
 
 if (!APP_ID || !SECRET_KEY) {
     console.error("❌ ERRO: SHOPEE_APP_ID e SHOPEE_SECRET_KEY são obrigatórios");
@@ -13,7 +13,7 @@ if (!APP_ID || !SECRET_KEY) {
 }
 
 if (!WEBAPP_URL) {
-    console.error("❌ ERRO: GOOGLE_WEBAPP_URL_BESTSELLERS é obrigatório");
+    console.error("❌ ERRO: VITE_GOOGLE_WEBAPP_URL_BESTSELLERS é obrigatório");
     process.exit(1);
 }
 
