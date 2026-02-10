@@ -240,14 +240,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 btnIG.addEventListener('click', async () => {
+                    console.log('🔵 Botão Instagram clicado');
+                    console.log('🔍 Detecção de dispositivo:', /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop');
+                    console.log('🔍 navigator.share disponível:', !!navigator.share);
+                    console.log('🔍 navigator.canShare disponível:', !!navigator.canShare);
+                    
                     fillForm();
                     const result = getFormattedText();
                     if (!result.valid) return;
 
                     try {
                         await navigator.clipboard.writeText(product.offerLink);
+                        console.log('✅ Link copiado para clipboard');
                     } catch (err) {
-                        console.warn('Não foi possível copiar:', err);
+                        console.warn('⚠️ Não foi possível copiar:', err);
                     }
 
                     const originalBtnContent = btnIG.innerHTML;
@@ -255,14 +261,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     btnIG.disabled = true;
 
                     try {
+                        console.log('🎨 Iniciando geração da imagem...');
                         await generateStoryImage(product, result);
+                        console.log('✅ Imagem gerada com sucesso!');
                         btnIG.innerHTML = '✅ Pronto!';
                         setTimeout(() => {
                             btnIG.innerHTML = originalBtnContent;
                             btnIG.disabled = false;
                         }, 2000);
                     } catch (err) {
-                        console.error('Erro ao gerar imagem:', err);
+                        console.error('❌ Erro ao gerar imagem:', err);
                         btnIG.innerHTML = '❌ Erro';
                         setTimeout(() => {
                             btnIG.innerHTML = originalBtnContent;
@@ -421,22 +429,60 @@ async function generateStoryImage(product, formattedData) {
     ctx.font = 'bold 65px Outfit, sans-serif';
     ctx.fillStyle = '#FFFFFF';
 
+    // Detecta se está em mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    console.log('📱 isMobile:', isMobile);
+    
     return new Promise((resolve, reject) => {
         canvas.toBlob(async (blob) => {
             if (!blob) {
+                console.error('❌ Canvas to Blob falhou');
                 reject(new Error('Canvas to Blob falhou'));
                 return;
             }
+            
+            console.log('✅ Blob criado:', blob.size, 'bytes');
             const file = new File([blob], 'story-promocao.png', { type: 'image/png' });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            console.log('✅ File criado:', file.name, file.type);
+            
+            // Se está em mobile, sempre tenta compartilhar primeiro
+            if (isMobile && navigator.share) {
+                console.log('🔵 Mobile detectado com navigator.share disponível');
                 try {
-                    await navigator.share({ files: [file], title: 'Promoção Itambé', text: 'Olha essa oferta!' });
-                    resolve(true);
+                    // Verifica se pode compartilhar arquivos
+                    const canShareFiles = navigator.canShare && navigator.canShare({ files: [file] });
+                    console.log('🔍 canShareFiles:', canShareFiles);
+                    
+                    if (canShareFiles) {
+                        console.log('🚀 Tentando compartilhar via navigator.share...');
+                        await navigator.share({ 
+                            files: [file], 
+                            title: 'Promoção Itambé', 
+                            text: 'Confira essa promoção incrível!' 
+                        });
+                        console.log('✅ Compartilhamento bem-sucedido!');
+                        resolve(true);
+                    } else {
+                        // Se não pode compartilhar arquivos, tenta apenas texto
+                        console.warn('⚠️ Compartilhamento de arquivos não suportado, fazendo download');
+                        tryDownload(blob, product.productName, resolve);
+                    }
                 } catch (shareError) {
-                    if (shareError.name === 'AbortError') resolve(false);
-                    else tryDownload(blob, product.productName, resolve);
+                    console.error('❌ Erro ao compartilhar:', shareError.name, shareError.message);
+                    
+                    // Se o usuário apenas cancelou o compartilhamento
+                    if (shareError.name === 'AbortError') {
+                        console.log('ℹ️ Usuário cancelou o compartilhamento');
+                        resolve(false);
+                    } else {
+                        // Para outros erros, faz download como fallback
+                        console.warn('⚠️ Erro não esperado, fazendo download como fallback');
+                        tryDownload(blob, product.productName, resolve);
+                    }
                 }
             } else {
+                // Desktop ou navegador sem suporte a share
+                console.log('💻 Desktop ou sem suporte a share - fazendo download');
                 tryDownload(blob, product.productName, resolve);
             }
         }, 'image/png');
@@ -444,6 +490,7 @@ async function generateStoryImage(product, formattedData) {
 }
 
 function tryDownload(blob, name, resolve) {
+    console.log('💾 Iniciando download da imagem:', `story-${name.substring(0, 20)}.png`);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -452,6 +499,7 @@ function tryDownload(blob, name, resolve) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    console.log('✅ Download iniciado com sucesso');
     resolve(true);
 }
 
