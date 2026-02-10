@@ -13,14 +13,19 @@ function formatProductRows(products) {
     ]);
 }
 
-async function sendToSheets(webappUrl, products) {
+async function sendToSheets(webappUrl, products, meta) {
     if (!webappUrl) {
         throw new Error('URL do Google Web App não configurada');
     }
 
     const rows = formatProductRows(products);
 
-    const response = await axios.post(webappUrl, { rows }, {
+    const payload = { rows };
+    if (meta) {
+        payload.meta = meta;
+    }
+
+    const response = await axios.post(webappUrl, payload, {
         maxRedirects: 5,
         validateStatus: function (status) {
             return status >= 200 && status < 400;
@@ -34,4 +39,19 @@ async function sendToSheets(webappUrl, products) {
     return { rows: rows.length, response: response.data };
 }
 
-module.exports = { formatProductRows, sendToSheets };
+async function readFromSheets(webappUrl) {
+    if (!webappUrl) {
+        throw new Error('URL do Google Web App não configurada');
+    }
+
+    const response = await axios.get(webappUrl, {
+        maxRedirects: 5,
+        validateStatus: function (status) {
+            return status >= 200 && status < 400;
+        }
+    });
+
+    return response.data;
+}
+
+module.exports = { formatProductRows, sendToSheets, readFromSheets };

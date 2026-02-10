@@ -1,0 +1,44 @@
+name: Atualizar Mais Vendidos
+
+on:
+  schedule:
+    # Executa todos os dias às 11:40 (horário de Brasília, UTC-3)
+    # 11:40 BRT = 14:40 UTC
+    - cron: '40 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-bestsellers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 📦 Instalar dependências
+        run: npm ci
+
+      - name: 🔥 Buscar mais vendidos e atualizar planilha
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET_KEY: ${{ secrets.SHOPEE_SECRET_KEY }}
+          GOOGLE_WEBAPP_URL_BESTSELLERS: ${{ secrets.GOOGLE_WEBAPP_URL_BESTSELLERS }}
+        run: npm run update-bestsellers
+
+      - name: ✅ Concluído
+        if: success()
+        run: |
+          echo "🎉 Mais vendidos atualizados com sucesso!"
+          echo "⏰ Horário: $(date)"
+
+      - name: ❌ Falha
+        if: failure()
+        run: |
+          echo "💥 Erro ao atualizar mais vendidos"
+          echo "⏰ Horário: $(date)"

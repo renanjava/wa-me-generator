@@ -1,45 +1,49 @@
-name: Atualizar Planilha Automaticamente
+# =============================================================
+# WORKFLOW TEMPORARIAMENTE DESABILITADO
+# Para reativar: descomente o bloco "schedule" abaixo
+# =============================================================
+
+name: Atualizar Planilha Alta Comissão (DESABILITADO)
 
 on:
-  schedule:
-    # Executa toda sexta-feira às 05:30 (horário de Brasília, UTC-3)
-    # 05:30 BRT = 08:30 UTC
-    - cron: '30 8 * * 5'
-  # Permite execução manual via GitHub Actions UI
+  # schedule:
+  #   # Executa toda sexta-feira às 05:30 (horário de Brasília, UTC-3)
+  #   # 05:30 BRT = 08:30 UTC
+  #   - cron: '30 8 * * 5'
   workflow_dispatch:
 
 jobs:
   update-sheets:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: 📥 Checkout do repositório
         uses: actions/checkout@v4
-      
+
       - name: 🟢 Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: 📦 Instalar dependências
         run: npm ci
-      
+
       - name: 💰 Buscar produtos e atualizar planilha
         env:
           SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
           SHOPEE_SECRET_KEY: ${{ secrets.SHOPEE_SECRET_KEY }}
           GOOGLE_WEBAPP_URL: ${{ secrets.GOOGLE_WEBAPP_URL }}
         run: npm run update-sheets
-      
+
       - name: ✅ Concluído
         if: success()
         run: |
           echo "🎉 Planilha atualizada com sucesso!"
-          echo "⏰ Horário da execução: $(date)"
-      
-      - name: ❌ Falha na execução
+          echo "⏰ Horário: $(date)"
+
+      - name: ❌ Falha
         if: failure()
         run: |
           echo "💥 Erro ao atualizar a planilha"
-          echo "⏰ Horário da falha: $(date)"
+          echo "⏰ Horário: $(date)"
