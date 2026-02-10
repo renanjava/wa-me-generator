@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gerador de mensagens promocionais para WhatsApp e imagens para Instagram Stories. Ferramenta para afiliados Shopee.">
     <title>Gerador de Mensagens Shopee - Itambé Promoções</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,21 +93,20 @@
                 </div>
 
                 <div class="actions">
-                    <div class="json-section" style="margin-bottom: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <label for="jsonInput" style="display: block; margin-bottom: 5px; font-weight: bold;">Cole o JSON da Shopee aqui:</label>
-                        <textarea id="jsonInput" placeholder='{"data": ...}' style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: monospace; font-size: 12px; margin-bottom: 10px;"></textarea>
+                    <div class="json-section">
+                        <label for="jsonInput" class="json-section__label">Cole o JSON da Shopee aqui:</label>
+                        <textarea id="jsonInput" class="json-section__input" placeholder='{"data": ...}'></textarea>
                         
-                        <button type="button" id="btnLoadJson" class="btn-primary" style="background-color: #2563eb; width: 100%; margin-bottom: 10px;">
+                        <button type="button" id="btnLoadJson" class="btn-primary btn-load-json">
                             📂 Carregar Produtos
                         </button>
                         
-                        <button type="button" id="btnFetchHighCommission" class="btn-primary" style="background-color: #10b981; width: 100%; margin-bottom: 10px;">
+                        <button type="button" id="btnFetchHighCommission" class="btn-primary btn-fetch-commission">
                             💰 Buscar Maior Comissão e Atualizar Planilha
                         </button>
                     </div>
 
-                    <div id="productsList" class="products-list" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
-                    </div>
+                    <div id="productsList" class="products-list"></div>
 
                     <button type="button" id="btnSend" class="btn-primary btn-whatsapp">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -120,6 +120,11 @@
     </main>
 
     <canvas id="storyCanvas" style="display: none;"></canvas>
-    <script src="script.js"></script>
+
+    <script src="js/form.js"></script>
+    <script src="js/share.js"></script>
+    <script src="js/storyCanvas.js"></script>
+    <script src="js/productCards.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

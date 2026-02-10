@@ -1,58 +1,59 @@
 # Shopee Promotion Message Generator
 
-Este projeto é uma ferramenta web para afiliados da Shopee que desejam gerar rapidamente mensagens promocionais formatadas para WhatsApp e imagens atraentes para Instagram Stories.
+Ferramenta web para afiliados da Shopee que gera mensagens promocionais para WhatsApp e imagens para Instagram Stories.
 
 ## 🚀 Funcionalidades
 
-- **Gerador de Mensagens para WhatsApp**: Preencha os dados do produto ou cole um JSON da Shopee para gerar automaticamente mensagens formatadas (negrito, itálico, preços, links).
-- **Importação via JSON**: Suporta a importação direta de dados de produtos através do formato JSON da API de Afiliados da Shopee.
-- **Story Generator para Instagram**: Gera imagens personalizadas (1080x1920px) em tempo real usando HTML5 Canvas, incluindo:
-    - Fundo gradiente moderno com alto contraste.
-    - Card de produto com sombra e imagem centralizada.
-    - Preço em destaque (antigo riscado e atual em vermelho).
-    - Nome do produto com quebra de linha inteligente.
-    - Indicadores visuais (setas) para colagem de links no Instagram.
-- **Copy to Clipboard**: Copia automaticamente os links para a área de transferência ao clicar no botão de Instagram.
-- **Integração com Web Share API**: Compartilhamento nativo de imagens em dispositivos móveis ou download automático em desktops.
-- **Backend Node.js**: Servidor Express opcional para integrar diretamente com a API de Afiliados da Shopee.
-- **🤖 Automação GitHub Actions**: Atualização automática diária da planilha às 22:00 (horário de Brasília).
+- **Gerador de Mensagens para WhatsApp** — preencha dados ou cole JSON para gerar mensagens formatadas
+- **Importação via JSON** — suporta dados da API de Afiliados da Shopee
+- **Story Generator para Instagram** — gera imagens 1080×1920 via Canvas API com compartilhamento nativo mobile
+- **Integração Google Sheets** — sincroniza produtos de alta comissão com sua planilha
+- **Automação GitHub Actions** — atualização automática semanal da planilha
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Stack
 
-- **Frontend**: HTML5, CSS3 (Vanilla), JavaScript (ES6+).
-- **Design**: Fonte "Outfit" do Google Fonts, Glassmorphism, Gradientes Dinâmicos.
-- **Gráficos**: HTML5 Canvas API para geração de imagens sob demanda.
-- **Backend**: Node.js, Express, Axios, CryptoJS.
-- **Segurança**: Variáveis de ambiente com `dotenv` para proteção de chaves de API.
+- **Frontend**: HTML5, CSS3 (Vanilla), JavaScript (ES6+, modular IIFE)
+- **Backend**: Node.js, Express, Axios, CryptoJS
+- **Design**: Fonte Outfit, Glassmorphism, Gradientes
 
-## 📂 Estrutura do Projeto
+## 📂 Estrutura
 
-- `index.html`: Estrutura principal da aplicação.
-- `script.js`: Lógica de processamento de dados, formatação de mensagens e geração de canvas.
-- `style.css`: Estilização completa do layout responsivo e moderno.
-- `server.js`: Servidor para ponte com a API oficial da Shopee (opcional).
-- `.env`: Arquivo de configuração de credenciais (deve ser criado localmente).
+```
+wa-me-generator/
+├── src/                          # Backend
+│   ├── shopee/shopeeClient.js    # Cliente API Shopee (autenticação + fetch)
+│   ├── sheets/sheetsService.js   # Serviço Google Sheets
+│   ├── server.js                 # Servidor Express
+│   └── cron/updateSheets.js      # Script de atualização automática
+├── public/                       # Frontend
+│   ├── index.html                # Página principal
+│   ├── style.css                 # Estilos
+│   └── js/
+│       ├── main.js               # Ponto de entrada
+│       ├── form.js               # Formulário e mensagens
+│       ├── productCards.js       # Cards de produtos
+│       ├── storyCanvas.js        # Geração de imagens Canvas
+│       └── share.js              # Compartilhamento mobile/download
+├── .github/workflows/            # CI/CD
+├── .editorconfig                 # Padrões de formatação
+├── .env.example                  # Template de variáveis de ambiente
+└── package.json
+```
 
 ## 📋 Como Usar
 
-1. **Localmente**: Basta abrir o arquivo `index.html` em qualquer navegador moderno.
-2. **Importação**: Cole o JSON retornado pela API da Shopee no campo indicado ou preencha os campos manualmente.
-3. **Compartilhamento**:
-    - Clique no ícone do **WhatsApp** para abrir o app com o texto pronto.
-    - Clique no ícone do **Instagram** para copiar os links, gerar a imagem e abrir as opções de compartilhamento (ou baixar a imagem).
+1. Configure o `.env` a partir do `.env.example`
+2. Execute `npm install`
+3. Execute `npm start`
+4. Acesse `http://localhost:3000`
 
 ## 🤖 Automação
 
-Este projeto possui automação via GitHub Actions que atualiza a planilha automaticamente todos os dias às 22:00.
+Toda sexta-feira às 05:30 (BRT), o GitHub Actions busca produtos de alta comissão e atualiza a planilha.
 
-📖 **[Leia a documentação completa de automação](README_AUTOMACAO.md)**
+**Secrets necessários**: `SHOPEE_APP_ID`, `SHOPEE_SECRET_KEY`, `GOOGLE_WEBAPP_URL`
 
-Para configurar:
-1. Configure os Secrets no GitHub (SHOPEE_APP_ID, SHOPEE_SECRET_KEY, GOOGLE_WEBAPP_URL)
-2. Faça push do código para o repositório
-3. A automação executará automaticamente no horário configurado
-
-Você também pode executar manualmente via GitHub Actions UI.
+Execução manual disponível via GitHub Actions UI.
 
 ---
 Desenvolvido para **Itambé Promoções**.

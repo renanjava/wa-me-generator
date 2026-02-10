@@ -1,11 +1,11 @@
 {
-  "name": "wa-me-generator-backend",
+  "name": "wa-me-generator",
   "version": "1.0.0",
-  "description": "Backend for Shopee API integration",
-  "main": "server.js",
+  "description": "Gerador de mensagens promocionais para WhatsApp e imagens para Instagram Stories",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node server.js",
-    "update-sheets": "node update-sheets-cron.js"
+    "start": "node src/server.js",
+    "update-sheets": "node src/cron/updateSheets.js"
   },
   "dependencies": {
     "axios": "^1.6.0",

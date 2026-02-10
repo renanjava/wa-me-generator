@@ -36,6 +36,8 @@ body {
     padding: 2rem;
 }
 
+/* ===== Background Blobs ===== */
+
 .background-blobs {
     position: fixed;
     top: 0;
@@ -85,6 +87,8 @@ body {
     from { transform: translate(0, 0) scale(1); }
     to { transform: translate(30px, -30px) scale(1.1); }
 }
+
+/* ===== Layout ===== */
 
 .container {
     width: 100%;
@@ -141,6 +145,8 @@ body {
     }
 }
 
+/* ===== Cards ===== */
+
 .card {
     background: var(--card-bg);
     backdrop-filter: blur(12px);
@@ -162,6 +168,8 @@ body {
     align-items: center;
     gap: 0.5rem;
 }
+
+/* ===== Form ===== */
 
 .form-group {
     margin-bottom: 1.2rem;
@@ -258,6 +266,8 @@ input[type="checkbox"]:checked::after {
     color: var(--text-main);
 }
 
+/* ===== Preview ===== */
+
 .preview-header {
     display: flex;
     justify-content: space-between;
@@ -296,7 +306,7 @@ input[type="checkbox"]:checked::after {
 }
 
 .preview-box {
-    background: #0b141a; 
+    background: #0b141a;
     border-radius: 10px;
     padding: 1.5rem;
     min-height: 300px;
@@ -324,12 +334,51 @@ input[type="checkbox"]:checked::after {
     overflow-x: hidden;
 }
 
+/* ===== Actions ===== */
+
 .actions {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     align-items: center;
 }
+
+/* ===== JSON Section ===== */
+
+.json-section {
+    margin-bottom: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    width: 100%;
+}
+
+.json-section__label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--text-main);
+}
+
+.json-section__input {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 12px;
+    margin-bottom: 10px;
+    background: var(--input-bg);
+    color: var(--text-main);
+    resize: vertical;
+}
+
+.json-section__input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* ===== Buttons ===== */
 
 .btn-primary {
     width: 100%;
@@ -362,9 +411,45 @@ input[type="checkbox"]:checked::after {
     background: #25D366;
     color: white;
 }
+
 .btn-whatsapp:hover {
     background: #128C7E;
     box-shadow: 0 10px 20px -5px rgba(37, 211, 102, 0.4);
+}
+
+.btn-instagram {
+    background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+    color: white;
+}
+
+.btn-instagram:hover {
+    box-shadow: 0 10px 20px -5px rgba(131, 58, 180, 0.4);
+}
+
+.btn-load-json {
+    background: #2563eb;
+    margin-bottom: 10px;
+}
+
+.btn-load-json:hover {
+    background: #1d4ed8;
+    box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+}
+
+.btn-fetch-commission {
+    background: #10b981;
+    margin-bottom: 10px;
+}
+
+.btn-fetch-commission:hover {
+    background: #059669;
+    box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+}
+
+.btn-sm {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    flex: 1;
 }
 
 .feedback-msg {
@@ -375,6 +460,8 @@ input[type="checkbox"]:checked::after {
     font-weight: 600;
 }
 
+/* ===== Product Cards ===== */
+
 .products-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -382,6 +469,7 @@ input[type="checkbox"]:checked::after {
     max-height: 600px;
     overflow-y: auto;
     padding-right: 10px;
+    width: 100%;
 }
 
 .product-card-item {
@@ -448,13 +536,17 @@ input[type="checkbox"]:checked::after {
     color: #6b7280;
 }
 
+.product-commission--highlight {
+    color: #10b981;
+    font-weight: bold;
+    font-size: 12px;
+}
+
 .product-actions {
     display: flex;
     gap: 0.8rem;
 }
 
-.btn-sm {
-    padding: 0.6rem;
-    font-size: 0.9rem;
-    flex: 1;
+.no-image-text {
+    color: #ccc;
 }
