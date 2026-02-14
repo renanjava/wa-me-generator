@@ -1,7 +1,7 @@
-export const Share = (function() {
+export const Share = (function () {
 
-    async function shareImage(blob) {
-        var file = new File([blob], 'story-promocao.png', { type: 'image/png' });
+    async function shareImage(blob: Blob): Promise<boolean> {
+        const file: File = new File([blob], 'story-promocao.png', { type: 'image/png' });
 
         if (!navigator.share) {
             alert('Seu navegador não suporta compartilhamento. Use o Chrome atualizado.');
@@ -20,10 +20,10 @@ export const Share = (function() {
         return true;
     }
 
-    async function copyToClipboard(text) {
+    async function copyToClipboard(text: string): Promise<void> {
         try {
             await navigator.clipboard.writeText(text);
-        } catch (err) {
+        } catch (err: unknown) {
             console.warn('Não foi possível copiar:', err);
         }
     }

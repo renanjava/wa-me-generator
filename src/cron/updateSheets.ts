@@ -1,11 +1,13 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
-const { fetchProducts } = require('../shopee/shopeeClient');
-const { sendToSheets } = require('../sheets/sheetsService');
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
-const APP_ID = process.env.SHOPEE_APP_ID;
-const SECRET_KEY = process.env.SHOPEE_SECRET_KEY;
-const WEBAPP_URL = process.env.GOOGLE_WEBAPP_URL;
+import { fetchProducts } from '../shopee/shopeeClient';
+import { sendToSheets } from '../sheets/sheetsService';
+
+const APP_ID: string | undefined = process.env.SHOPEE_APP_ID;
+const SECRET_KEY: string | undefined = process.env.SHOPEE_SECRET_KEY;
+const WEBAPP_URL: string | undefined = process.env.GOOGLE_WEBAPP_URL;
 
 if (!APP_ID || !SECRET_KEY) {
     console.error("❌ ERRO: SHOPEE_APP_ID e SHOPEE_SECRET_KEY são obrigatórios");
@@ -17,7 +19,7 @@ if (!WEBAPP_URL) {
     process.exit(1);
 }
 
-async function main() {
+async function main(): Promise<void> {
     console.log('🚀 Iniciando atualização automática da planilha...');
     console.log(`⏰ Horário: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}`);
     console.log('');
@@ -41,9 +43,9 @@ async function main() {
 
         console.log('🎉 Processo concluído com sucesso!');
         process.exit(0);
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('');
-        console.error('💥 Erro fatal durante a execução:', error.message);
+        console.error('💥 Erro fatal durante a execução:', (error as Error).message);
         process.exit(1);
     }
 }
