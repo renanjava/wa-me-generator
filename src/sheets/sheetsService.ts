@@ -1,7 +1,7 @@
 import axios, { type AxiosResponse } from 'axios';
 import type { Product, SheetMeta, SendToSheetsResult } from '../types';
 
-type ProductRow = [string, string, number, string];
+type ProductRow = [string, string, number, string, number, number];
 
 function formatProductRows(products: Product[]): ProductRow[] {
     if (!products || !Array.isArray(products) || products.length === 0) {
@@ -12,7 +12,9 @@ function formatProductRows(products: Product[]): ProductRow[] {
         product.productName || '',
         product.offerLink || '',
         parseFloat(String(product.price)) || 0,
-        product.imageUrl || ''
+        product.imageUrl || '',
+        parseFloat(String(product.commission)) || 0,
+        parseFloat(String(product.commissionRate)) || 0
     ]);
 }
 
