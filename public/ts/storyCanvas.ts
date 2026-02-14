@@ -161,23 +161,23 @@ export async function drawStory(
     // 5. Detalhes do Produto (Nome e Preço)
     ctx.textAlign = 'center';
     
-    // Nome do Produto
+    // Nome do Produto - Movido um pouco mais para baixo
     ctx.fillStyle = '#333333';
     ctx.font = '600 42px "Outfit", "Segoe UI", sans-serif';
-    wrapText(ctx, product.productName, W/2, cardY + cardH - 420, cardW - 80, 50, 2);
+    wrapText(ctx, product.productName, W/2, cardY + cardH - 380, cardW - 80, 50, 2);
 
     // Divisor
     ctx.strokeStyle = '#eeeeee';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(cardX + 50, cardY + cardH - 280);
-    ctx.lineTo(cardX + cardW - 50, cardY + cardH - 280);
+    ctx.moveTo(cardX + 50, cardY + cardH - 260);
+    ctx.lineTo(cardX + cardW - 50, cardY + cardH - 260);
     ctx.stroke();
 
     // Texto "Oferta Imperdível"
     ctx.fillStyle = '#666';
     ctx.font = '500 30px "Outfit", sans-serif';
-    ctx.fillText("🛒 OFERTA IMPERDÍVEL", W/2, cardY + cardH - 220);
+    ctx.fillText("🛒 OFERTA IMPERDÍVEL", W/2, cardY + cardH - 200);
 
     // Preço
     ctx.fillStyle = '#ef4444'; // Vermelho preço
